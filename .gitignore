@@ -1,0 +1,63 @@
+# Build outputs
+target/
+build/
+dist/
+*.jar
+!mvnw.jar
+
+# Dependencies
+node_modules/
+.npm/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# DynamoDB Local
+dynamodb-local/
+shared-local-instance.db
+
+# AWS files
+.aws/
+aws-exports.js
+
+# Test files
+coverage/
+*.coverage
+test-results/
+
+# Temporary files
+*.swp
+*.swo
+*~
+
+# Extensions
+extensions/
+
+# Kiro specific
+argv.json
+.kiro/settings/

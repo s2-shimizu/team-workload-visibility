@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チーム状況ダッシュボード</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎯 チーム状況ダッシュボード</h1>
+            <nav class="nav">
+                <button class="nav-btn active" data-tab="dashboard">ダッシュボード</button>
+                <button class="nav-btn" data-tab="report">日報投稿</button>
+                <button class="nav-btn" data-tab="calendar">カレンダー</button>
+            </nav>
+        </header>
+
+        <main class="main">
+            <!-- ダッシュボードタブ -->
+            <div id="dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <!-- 負荷状況セクション -->
+                    <section class="workload-status">
+                        <div class="section-header">
+                            <h2>⚡ チーム負荷状況</h2>
+                            <button id="updateWorkloadBtn" class="update-btn">負荷状況を更新</button>
+                        </div>
+                        <div class="workload-cards" id="workloadStatusCards">
+                            <!-- 動的に生成 -->
+                        </div>
+                        <div class="data-freshness" id="workloadDataFreshness">
+                            データを読み込み中...
+                        </div>
+                    </section>
+
+                    <section class="team-status">
+                        <h2>📊 チーム状況</h2>
+                        <div class="status-cards" id="teamStatusCards">
+                            <!-- 動的に生成 -->
+                        </div>
+                    </section>
+
+                    <!-- 困りごとセクション -->
+                    <section class="team-issues">
+                        <div class="section-header">
+                            <h2>💬 チーム困りごと</h2>
+                            <button id="addIssueBtn" class="update-btn">困りごとを投稿</button>
+                        </div>
+                        <div class="issues-filter">
+                            <button class="filter-btn active" data-status="all">すべて</button>
+                            <button class="filter-btn" data-status="OPEN">未解決</button>
+                            <button class="filter-btn" data-status="RESOLVED">解決済み</button>
+                        </div>
+                        <div class="issues-list" id="teamIssuesList">
+                            <!-- 動的に生成 -->
+                        </div>
+                        <div class="data-freshness" id="issuesDataFreshness">
+                            データを読み込み中...
+                        </div>
+                    </section>
+
+                    <section class="recent-reports">
+                        <h2>📝 最新の日報</h2>
+                        <div class="filter-controls">
+                            <select id="dateFilter">
+                                <option value="today">今日</option>
+                                <option value="yesterday">昨日</option>
+                                <option value="week" selected>過去7日</option>
+                            </select>
+                        </div>
+                        <div class="reports-list" id="recentReportsList">
+                            <!-- 動的に生成 -->
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- 日報投稿タブ -->
+            <div id="report" class="tab-content">
+                <section class="report-form-section">
+                    <h2>📝 日報投稿</h2>
+                    <form id="reportForm" class="report-form">
+                        <div class="form-group">
+                            <label for="workContent">作業内容 *</label>
+                            <textarea id="workContent" name="workContent" required 
+                                placeholder="今日の作業内容を入力してください"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="insights">気づき・学び</label>
+                            <textarea id="insights" name="insights" 
+                                placeholder="今日の気づきや学んだことがあれば入力してください"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="issues">困りごと・課題</label>
+                            <textarea id="issues" name="issues" 
+                                placeholder="困っていることや課題があれば入力してください"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="workloadLevel">負荷レベル *</label>
+                            <div class="workload-selector">
+                                <input type="radio" id="level1" name="workloadLevel" value="1" required>
+                                <label for="level1" class="workload-label level-1">😊 軽い</label>
+                                
+                                <input type="radio" id="level2" name="workloadLevel" value="2">
+                                <label for="level2" class="workload-label level-2">🙂 普通</label>
+                                
+                                <input type="radio" id="level3" name="workloadLevel" value="3">
+                                <label for="level3" class="workload-label level-3">😐 やや重い</label>
+                                
+                                <input type="radio" id="level4" name="workloadLevel" value="4">
+                                <label for="level4" class="workload-label level-4">😰 重い</label>
+                                
+                                <input type="radio" id="level5" name="workloadLevel" value="5">
+                                <label for="level5" class="workload-label level-5">😵 非常に重い</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn">📤 日報を投稿</button>
+                    </form>
+                </section>
+            </div>
+
+            <!-- カレンダータブ -->
+            <div id="calendar" class="tab-content">
+                <section class="calendar-section">
+                    <h2>📅 カレンダー</h2>
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button id="prevMonth">‹</button>
+                            <h3 id="currentMonth"></h3>
+                            <button id="nextMonth">›</button>
+                        </div>
+                        <div class="calendar-grid" id="calendarGrid">
+                            <!-- 動的に生成 -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <!-- 負荷状況更新モーダル -->
+    <div id="workloadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚡ 負荷状況を更新</h3>
+                <button class="modal-close" id="workloadModalClose">&times;</button>
+            </div>
+            <form id="workloadForm" class="modal-form">
+                <div class="form-group">
+                    <label for="workloadLevelSelect">負荷レベル *</label>
+                    <div class="workload-level-selector">
+                        <input type="radio" id="levelLow" name="workloadLevel" value="LOW" required>
+                        <label for="levelLow" class="level-option level-low">
+                            <span class="level-emoji">😊</span>
+                            <span class="level-text">低</span>
+                        </label>
+                        
+                        <input type="radio" id="levelMedium" name="workloadLevel" value="MEDIUM">
+                        <label for="levelMedium" class="level-option level-medium">
+                            <span class="level-emoji">😐</span>
+                            <span class="level-text">中</span>
+                        </label>
+                        
+                        <input type="radio" id="levelHigh" name="workloadLevel" value="HIGH">
+                        <label for="levelHigh" class="level-option level-high">
+                            <span class="level-emoji">😰</span>
+                            <span class="level-text">高</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="projectCount">担当案件数（任意）</label>
+                    <input type="number" id="projectCount" name="projectCount" min="0" max="20" 
+                           placeholder="例: 3">
+                    <small class="form-help">現在担当している案件の数</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskCount">進行中タスク数（任意）</label>
+                    <input type="number" id="taskCount" name="taskCount" min="0" max="100" 
+                           placeholder="例: 15">
+                    <small class="form-help">現在進行中のタスクの数</small>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="workloadCancelBtn">キャンセル</button>
+                    <button type="submit" class="btn-primary">更新する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 困りごと投稿モーダル -->
+    <div id="issueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💬 困りごとを投稿</h3>
+                <button class="modal-close" id="issueModalClose">&times;</button>
+            </div>
+            <form id="issueForm" class="modal-form">
+                <div class="form-group">
+                    <label for="issueContent">困りごと・課題の内容 *</label>
+                    <textarea id="issueContent" name="content" required 
+                              placeholder="困っていることや課題について詳しく教えてください。&#10;&#10;例：&#10;・新しい技術の学習で詰まっている&#10;・プロジェクトの進め方で悩んでいる&#10;・チーム内のコミュニケーションで困っている"
+                              rows="6"></textarea>
+                    <small class="form-help">具体的に書くことで、他のメンバーからより良いアドバイスがもらえます</small>
+                </div>
+
+                <div class="form-group">
+                    <div class="issue-tips">
+                        <h4>💡 投稿のコツ</h4>
+                        <ul>
+                            <li>何に困っているかを具体的に書く</li>
+                            <li>どんな解決策を試したかを書く</li>
+                            <li>どんなアドバイスが欲しいかを書く</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="issueCancelBtn">キャンセル</button>
+                    <button type="submit" class="btn-primary">投稿する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- API Client and Data Manager -->
+    <script src="js/api-client.js"></script>
+    <script src="js/data-manager.js"></script>
+    <!-- Amplify JavaScript SDK -->
+    <script src="https://unpkg.com/aws-amplify@5.3.0/dist/aws-amplify.min.js"></script>
+    
+    <!-- アプリケーションスクリプト -->
+    <script type="module" src="js/aws-config.js"></script>
+    <script type="module" src="js/auth-manager.js"></script>
+    <script type="module" src="js/api-client.js"></script>
+    <script type="module" src="js/data-manager.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

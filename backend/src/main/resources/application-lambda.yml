@@ -1,0 +1,49 @@
+spring:
+  profiles:
+    active: lambda
+  main:
+    lazy-initialization: true
+  jpa:
+    open-in-view: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+# DynamoDB設定
+dynamodb:
+  table:
+    name: ${DYNAMODB_TABLE_NAME:TeamDashboard}
+
+# AWS設定
+aws:
+  region: ${AWS_REGION:ap-northeast-1}
+
+# セキュリティ設定（Cognito用）
+security:
+  jwt:
+    issuer: ${JWT_ISSUER:}
+    audience: ${JWT_AUDIENCE:}
+
+# JVM最適化
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health
+
+# ログ設定
+logging:
+  level:
+    root: WARN
+    com.teamdashboard: INFO
+    software.amazon.awssdk: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# サーバー設定
+server:
+  servlet:
+    context-path: /

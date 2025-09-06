@@ -1,0 +1,50 @@
+spring:
+  main:
+    lazy-initialization: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+# DynamoDB設定
+dynamodb:
+  table:
+    name: ${DYNAMODB_TABLE_NAME:TeamDashboard-local}
+
+# AWS設定
+aws:
+  region: ${AWS_REGION:ap-northeast-1}
+  dynamodb:
+    endpoint: ${DYNAMODB_ENDPOINT:http://localhost:8000}
+
+# セキュリティ設定（開発用）
+security:
+  jwt:
+    issuer: ${JWT_ISSUER:}
+    audience: ${JWT_AUDIENCE:}
+
+# サーバー設定
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# ログ設定
+logging:
+  level:
+    root: INFO
+    com.teamdashboard: DEBUG
+    software.amazon.awssdk: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# 管理エンドポイント
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

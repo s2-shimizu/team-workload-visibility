@@ -1,0 +1,12 @@
+{
+  "name": "team-dashboard-frontend",
+  "version": "1.0.0",
+  "description": "チーム状況ダッシュボード フロントエンド",
+  "scripts": {
+    "build": "mkdir -p build && cp -r *.html css js build/",
+    "dev": "python -m http.server 8080",
+    "start": "python -m http.server 8080"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

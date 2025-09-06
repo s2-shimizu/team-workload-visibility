@@ -1,0 +1,40 @@
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - echo "Installing frontend dependencies"
+            - cd frontend
+            - npm install
+        build:
+          commands:
+            - echo "Building frontend application"
+            - npm run build
+      artifacts:
+        baseDirectory: frontend/build
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - frontend/node_modules/**/*
+    appRoot: frontend
+  - backend:
+      phases:
+        preBuild:
+          commands:
+            - echo "Installing Java dependencies"
+            - cd backend
+            - chmod +x mvnw
+        build:
+          commands:
+            - echo "Building Lambda function"
+            - ./mvnw clean package -DskipTests
+            - mkdir -p ../amplify/backend/function/teamDashboardApi/src/
+            - cp target/team-dashboard-backend-*.jar ../amplify/backend/function/teamDashboardApi/src/
+            - echo "Lambda function built successfully"
+      artifacts:
+        baseDirectory: amplify/backend/function/teamDashboardApi/src
+        files:
+          - '**/*'
+    appRoot: backend
