@@ -1,0 +1,106 @@
+[
+  {
+    "type": "webhook",
+    "url": "https://example.com/webhook",
+    "payload": {
+      "event": "deployment_failed",
+      "deployment": {
+        "deploymentId": "test-failed-1757757670567",
+        "failedPhase": "build",
+        "error": "Test failure for notification testing",
+        "timestamp": "2025-09-13T10:01:10.568Z",
+        "logs": [
+          {
+            "timestamp": "2025-09-13T10:01:10.567Z",
+            "phase": "build",
+            "message": "Build failed",
+            "level": "ERROR"
+          }
+        ]
+      },
+      "timestamp": "2025-09-13T10:01:10.576Z"
+    },
+    "timestamp": "2025-09-13T10:01:10.576Z"
+  },
+  {
+    "type": "webhook",
+    "url": "https://example.com/integration-webhook",
+    "payload": {
+      "event": "deployment_failed",
+      "deployment": {
+        "deploymentId": "integration-test-1757757670585",
+        "failedPhase": "unknown",
+        "error": "Simulated deployment failure",
+        "timestamp": "2025-09-13T10:01:16.166Z",
+        "logs": [
+          {
+            "timestamp": "2025-09-13T10:01:10.586Z",
+            "phase": "provision",
+            "message": "Provisioning resources...",
+            "level": "INFO"
+          },
+          {
+            "timestamp": "2025-09-13T10:01:13.547Z",
+            "phase": "build",
+            "message": "Building application...",
+            "level": "INFO"
+          }
+        ]
+      },
+      "timestamp": "2025-09-13T10:01:16.170Z"
+    },
+    "timestamp": "2025-09-13T10:01:16.171Z"
+  },
+  {
+    "type": "webhook",
+    "url": "https://example.com/webhook",
+    "payload": {
+      "event": "deployment_failed",
+      "deployment": {
+        "deploymentId": "test-failed-1757757751495",
+        "failedPhase": "build",
+        "error": "Test failure for notification testing",
+        "timestamp": "2025-09-13T10:02:31.496Z",
+        "logs": [
+          {
+            "timestamp": "2025-09-13T10:02:31.495Z",
+            "phase": "build",
+            "message": "Build failed",
+            "level": "ERROR"
+          }
+        ]
+      },
+      "timestamp": "2025-09-13T10:02:31.504Z"
+    },
+    "timestamp": "2025-09-13T10:02:31.505Z"
+  },
+  {
+    "type": "webhook",
+    "url": "https://example.com/integration-webhook",
+    "payload": {
+      "event": "deployment_failed",
+      "deployment": {
+        "deploymentId": "integration-test-1757757754533",
+        "failedPhase": "unknown",
+        "error": "Simulated deployment failure",
+        "timestamp": "2025-09-13T10:02:37.898Z",
+        "logs": [
+          {
+            "timestamp": "2025-09-13T10:02:34.536Z",
+            "phase": "provision",
+            "message": "Provisioning resources...",
+            "level": "INFO"
+          },
+          {
+            "timestamp": "2025-09-13T10:02:35.568Z",
+            "phase": "build",
+            "message": "Building application...",
+            "level": "INFO"
+          }
+        ]
+      },
+      "timestamp": "2025-09-13T10:02:37.902Z"
+    },
+    "timestamp": "2025-09-13T10:02:37.903Z"
+  }
+]

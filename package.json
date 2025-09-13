@@ -1,0 +1,33 @@
+{
+  "name": "team-dashboard-aws-config-validator",
+  "version": "1.0.0",
+  "description": "AWS configuration validation tools for Team Dashboard application",
+  "main": "validate-aws-config.js",
+  "scripts": {
+    "validate": "node validate-aws-config.js",
+    "test-permissions": "node test-dynamodb-permissions.js",
+    "setup-env": "node setup-environment.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.490.0",
+    "@aws-sdk/client-lambda": "^3.490.0",
+    "@aws-sdk/client-api-gateway": "^3.490.0",
+    "@aws-sdk/client-ssm": "^3.490.0",
+    "@aws-sdk/lib-dynamodb": "^3.490.0",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "keywords": [
+    "aws",
+    "amplify",
+    "dynamodb",
+    "lambda",
+    "api-gateway",
+    "configuration",
+    "validation"
+  ],
+  "author": "Team Dashboard",
+  "license": "MIT"
+}

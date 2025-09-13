@@ -1,0 +1,488 @@
+# API Gateway統合設定テンプレート
+# Team Dashboard API Gateway Configuration Template
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Team Dashboard API Gateway Configuration Template'
+
+# パラメータ定義
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: 'デプロイメント環境 (dev/staging/prod)'
+    
+  ApiName:
+    Type: String
+    Default: team-dashboard-api
+    Description: 'API Gateway名のベース名'
+    
+  DomainName:
+    Type: String
+    Default: ''
+    Description: 'カスタムドメイン名（オプション）'
+    
+  CertificateArn:
+    Type: String
+    Default: ''
+    Description: 'SSL証明書のARN（カスタムドメイン使用時）'
+    
+  ThrottleBurstLimit:
+    Type: Number
+    Default: 200
+    Description: 'スロットリングバーストリミット'
+    
+  ThrottleRateLimit:
+    Type: Number
+    Default: 100
+    Description: 'スロットリングレートリミット'
+    
+  LogRetentionDays:
+    Type: Number
+    Default: 14
+    AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653]
+    Description: 'CloudWatchログの保持期間 (日)'
+
+# 条件定義
+Conditions:
+  IsProd: !Equals [!Ref Environment, 'prod']
+  IsStaging: !Equals [!Ref Environment, 'staging']
+  IsDev: !Equals [!Ref Environment, 'dev']
+  HasCustomDomain: !Not [!Equals [!Ref DomainName, '']]
+  HasCertificate: !Not [!Equals [!Ref CertificateArn, '']]
+
+# リソース定義
+Resources:
+  # API Gateway REST API
+  TeamDashboardApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub '${ApiName}-${Environment}'
+      StageName: !Ref Environment
+      Description: !Sub 'Team Dashboard REST API for ${Environment} environment'
+      
+      # エンドポイント設定
+      EndpointConfiguration:
+        Type: REGIONAL
+      
+      # CORS設定
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS,PATCH'"
+        AllowHeaders: >
+          'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,
+          X-Requested-With,Accept,Origin,Access-Control-Request-Method,
+          Access-Control-Request-Headers'
+        AllowOrigin: !If 
+          - IsProd
+          - !Sub "'https://${DomainName}'"
+          - "'*'"
+        AllowCredentials: true
+        MaxAge: "'600'"
+      
+      # 認証設定
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt CognitoUserPool.Arn
+            Identity:
+              Header: Authorization
+              ValidationExpression: "^Bearer [-0-9A-Za-z\\.]+$"
+              ReauthorizeEvery: 300
+        AddDefaultAuthorizerToCorsPreflight: false
+      
+      # API Gateway設定
+      GatewayResponses:
+        DEFAULT_4XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: !If [IsProd, !Sub "'https://${DomainName}'", "'*'"]
+              Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        DEFAULT_5XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: !If [IsProd, !Sub "'https://${DomainName}'", "'*'"]
+              Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+      
+      # スロットリング設定
+      ThrottleConfig:
+        BurstLimit: !Ref ThrottleBurstLimit
+        RateLimit: !Ref ThrottleRateLimit
+      
+      # アクセスログ設定
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiGatewayLogGroup.Arn
+        Format: !Sub |
+          {
+            "requestId": "$context.requestId",
+            "extendedRequestId": "$context.extendedRequestId",
+            "ip": "$context.identity.sourceIp",
+            "caller": "$context.identity.caller",
+            "user": "$context.identity.user",
+            "requestTime": "$context.requestTime",
+            "requestTimeEpoch": "$context.requestTimeEpoch",
+            "httpMethod": "$context.httpMethod",
+            "resourcePath": "$context.resourcePath",
+            "status": "$context.status",
+            "protocol": "$context.protocol",
+            "responseLength": "$context.responseLength",
+            "responseTime": "$context.responseTime",
+            "responseLatency": "$context.responseLatency",
+            "integrationLatency": "$context.integrationLatency",
+            "integrationStatus": "$context.integrationStatus",
+            "integrationErrorMessage": "$context.integrationErrorMessage",
+            "error": "$context.error.message",
+            "errorMessage": "$context.error.messageString",
+            "userAgent": "$context.identity.userAgent",
+            "stage": "$context.stage",
+            "environment": "${Environment}"
+          }
+      
+      # メソッドレベル設定
+      MethodSettings:
+        - ResourcePath: "/*"
+          HttpMethod: "*"
+          LoggingLevel: !If [IsProd, 'ERROR', 'INFO']
+          DataTraceEnabled: !If [IsProd, false, true]
+          MetricsEnabled: true
+          ThrottlingBurstLimit: !Ref ThrottleBurstLimit
+          ThrottlingRateLimit: !Ref ThrottleRateLimit
+      
+      # OpenAPI定義
+      DefinitionBody:
+        openapi: '3.0.1'
+        info:
+          title: !Sub '${ApiName}-${Environment}'
+          description: 'Team Dashboard REST API'
+          version: '1.0.0'
+        
+        # セキュリティ定義
+        components:
+          securitySchemes:
+            CognitoAuthorizer:
+              type: apiKey
+              name: Authorization
+              in: header
+              x-amazon-apigateway-authtype: cognito_user_pools
+              x-amazon-apigateway-authorizer:
+                type: cognito_user_pools
+                providerARNs:
+                  - !GetAtt CognitoUserPool.Arn
+        
+        # パス定義
+        paths:
+          # ヘルスチェックエンドポイント（認証不要）
+          /health:
+            get:
+              summary: 'Health check endpoint'
+              responses:
+                '200':
+                  description: 'Service is healthy'
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          status:
+                            type: string
+                          timestamp:
+                            type: string
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TeamDashboardFunction.Arn}/invocations'
+          
+          # 認証エンドポイント
+          /auth/login:
+            post:
+              summary: 'User login'
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        password:
+                          type: string
+              responses:
+                '200':
+                  description: 'Login successful'
+                '401':
+                  description: 'Authentication failed'
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TeamDashboardFunction.Arn}/invocations'
+          
+          # プロキシ統合（認証必要）
+          /{proxy+}:
+            x-amazon-apigateway-any-method:
+              security:
+                - CognitoAuthorizer: []
+              parameters:
+                - name: proxy
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TeamDashboardFunction.Arn}/invocations'
+          
+          # ルートパス
+          /:
+            x-amazon-apigateway-any-method:
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TeamDashboardFunction.Arn}/invocations'
+
+  # Lambda関数（参照）
+  TeamDashboardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'team-dashboard-api-${Environment}'
+      CodeUri: backend/target/
+      Handler: com.teamdashboard.LambdaHandler::handleRequest
+      Runtime: java17
+      MemorySize: 1024
+      Timeout: 30
+      Environment:
+        Variables:
+          SPRING_PROFILES_ACTIVE: !Sub 'lambda,dynamodb,${Environment}'
+          AWS_REGION: !Ref AWS::Region
+          DYNAMODB_TABLE_NAME: !Ref TeamDashboardTable
+          API_GATEWAY_STAGE: !Ref Environment
+          CORS_ALLOWED_ORIGINS: !If [IsProd, !Sub 'https://${DomainName}', '*']
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TeamDashboardApi
+            Path: /{proxy+}
+            Method: ANY
+        RootApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TeamDashboardApi
+            Path: /
+            Method: ANY
+
+  # Lambda実行権限
+  LambdaApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref TeamDashboardFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${TeamDashboardApi}/*/*'
+
+  # CloudWatch Logs グループ
+  ApiGatewayLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/apigateway/${ApiName}-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  # API Gateway アカウント設定
+  ApiGatewayAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiGatewayCloudWatchRole.Arn
+
+  # API Gateway CloudWatch ロール
+  ApiGatewayCloudWatchRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
+  # カスタムドメイン（条件付き）
+  CustomDomain:
+    Type: AWS::ApiGateway::DomainName
+    Condition: HasCustomDomain
+    Properties:
+      DomainName: !Ref DomainName
+      CertificateArn: !Ref CertificateArn
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      SecurityPolicy: TLS_1_2
+
+  # ベースパスマッピング（条件付き）
+  BasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Condition: HasCustomDomain
+    Properties:
+      DomainName: !Ref CustomDomain
+      RestApiId: !Ref TeamDashboardApi
+      Stage: !Ref Environment
+
+  # Cognito User Pool
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub '${ApiName}-${Environment}-users'
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+        - Name: name
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+
+  # Cognito User Pool Client
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      ClientName: !Sub '${ApiName}-${Environment}-client'
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
+        - USER_PASSWORD_AUTH
+      TokenValidityUnits:
+        AccessToken: hours
+        IdToken: hours
+        RefreshToken: days
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      RefreshTokenValidity: 30
+
+  # DynamoDB テーブル（参照）
+  TeamDashboardTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'TeamDashboard-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+
+  # CloudWatch アラーム
+  ApiGateway4XXErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ApiName}-${Environment}-4xx-errors'
+      AlarmDescription: 'API Gateway 4XX error rate alarm'
+      MetricName: 4XXError
+      Namespace: AWS/ApiGateway
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 10
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: ApiName
+          Value: !Sub '${ApiName}-${Environment}'
+        - Name: Stage
+          Value: !Ref Environment
+
+  ApiGateway5XXErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ApiName}-${Environment}-5xx-errors'
+      AlarmDescription: 'API Gateway 5XX error rate alarm'
+      MetricName: 5XXError
+      Namespace: AWS/ApiGateway
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: ApiName
+          Value: !Sub '${ApiName}-${Environment}'
+        - Name: Stage
+          Value: !Ref Environment
+
+  ApiGatewayLatencyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ApiName}-${Environment}-latency'
+      AlarmDescription: 'API Gateway latency alarm'
+      MetricName: Latency
+      Namespace: AWS/ApiGateway
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 5000  # 5秒
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: ApiName
+          Value: !Sub '${ApiName}-${Environment}'
+        - Name: Stage
+          Value: !Ref Environment
+
+# 出力値
+Outputs:
+  ApiGatewayId:
+    Description: 'API Gateway ID'
+    Value: !Ref TeamDashboardApi
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiGatewayId'
+  
+  ApiGatewayEndpoint:
+    Description: 'API Gateway endpoint URL'
+    Value: !Sub 'https://${TeamDashboardApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiEndpoint'
+  
+  CustomDomainName:
+    Condition: HasCustomDomain
+    Description: 'Custom domain name'
+    Value: !Ref CustomDomain
+    Export:
+      Name: !Sub '${AWS::StackName}-CustomDomain'
+  
+  CognitoUserPoolId:
+    Description: 'Cognito User Pool ID'
+    Value: !Ref CognitoUserPool
+    Export:
+      Name: !Sub '${AWS::StackName}-UserPoolId'
+  
+  CognitoUserPoolClientId:
+    Description: 'Cognito User Pool Client ID'
+    Value: !Ref CognitoUserPoolClient
+    Export:
+      Name: !Sub '${AWS::StackName}-UserPoolClientId'
+  
+  ApiGatewayLogGroupName:
+    Description: 'API Gateway CloudWatch Log Group name'
+    Value: !Ref ApiGatewayLogGroup
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiLogGroup'

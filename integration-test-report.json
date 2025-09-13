@@ -1,0 +1,641 @@
+{
+  "timestamp": "2025-09-13T10:28:44.993Z",
+  "success": false,
+  "phases": {
+    "preDeploymentCheck": {
+      "status": "SUCCESS",
+      "results": {
+        "passed": true,
+        "errors": [],
+        "warnings": [
+          {
+            "message": "backend.phases.preBuild command 2: 'cd' should be chained with '&&'",
+            "timestamp": "2025-09-13T10:28:45.004Z"
+          },
+          {
+            "message": "backend.phases.build command 2: 'cd' should be chained with '&&'",
+            "timestamp": "2025-09-13T10:28:45.004Z"
+          },
+          {
+            "message": "backend.phases.postBuild command 2: 'cd' should be chained with '&&'",
+            "timestamp": "2025-09-13T10:28:45.004Z"
+          },
+          {
+            "message": "Frontend node_modules not found (run npm install)",
+            "timestamp": "2025-09-13T10:28:52.652Z"
+          }
+        ],
+        "successes": [
+          {
+            "message": "amplify.yml version: 1",
+            "timestamp": "2025-09-13T10:28:44.999Z"
+          },
+          {
+            "message": "Frontend configuration structure validated",
+            "timestamp": "2025-09-13T10:28:45.000Z"
+          },
+          {
+            "message": "Backend configuration structure validated",
+            "timestamp": "2025-09-13T10:28:45.001Z"
+          },
+          {
+            "message": "Directory reference validated: frontend",
+            "timestamp": "2025-09-13T10:28:45.002Z"
+          },
+          {
+            "message": "Directory reference validated: backend/target",
+            "timestamp": "2025-09-13T10:28:45.003Z"
+          },
+          {
+            "message": "Command section validated: frontend.phases.preBuild",
+            "timestamp": "2025-09-13T10:28:45.003Z"
+          },
+          {
+            "message": "Command section validated: frontend.phases.build",
+            "timestamp": "2025-09-13T10:28:45.003Z"
+          },
+          {
+            "message": "Command section validated: frontend.phases.postBuild",
+            "timestamp": "2025-09-13T10:28:45.004Z"
+          },
+          {
+            "message": "Command section validated: backend.phases.preBuild",
+            "timestamp": "2025-09-13T10:28:45.004Z"
+          },
+          {
+            "message": "Command section validated: backend.phases.build",
+            "timestamp": "2025-09-13T10:28:45.004Z"
+          },
+          {
+            "message": "Command section validated: backend.phases.postBuild",
+            "timestamp": "2025-09-13T10:28:45.004Z"
+          },
+          {
+            "message": "amplify.yml syntax validation completed",
+            "timestamp": "2025-09-13T10:28:45.004Z"
+          },
+          {
+            "message": "Required file exists: amplify.yml (2.7 KB)",
+            "timestamp": "2025-09-13T10:28:45.005Z"
+          },
+          {
+            "message": "Required file exists: frontend/index.html (16.3 KB)",
+            "timestamp": "2025-09-13T10:28:45.005Z"
+          },
+          {
+            "message": "Required file exists: frontend/css/style.css (28.3 KB)",
+            "timestamp": "2025-09-13T10:28:45.006Z"
+          },
+          {
+            "message": "Required file exists: frontend/js/app.js (47.8 KB)",
+            "timestamp": "2025-09-13T10:28:45.006Z"
+          },
+          {
+            "message": "Required file exists: frontend/js/api-client.js (14.1 KB)",
+            "timestamp": "2025-09-13T10:28:45.007Z"
+          },
+          {
+            "message": "Required file exists: backend/pom.xml (11.2 KB)",
+            "timestamp": "2025-09-13T10:28:45.008Z"
+          },
+          {
+            "message": "Required directory exists: backend/src/main/java",
+            "timestamp": "2025-09-13T10:28:45.008Z"
+          },
+          {
+            "message": "Optional file found: frontend/package.json (821.0 B)",
+            "timestamp": "2025-09-13T10:28:45.009Z"
+          },
+          {
+            "message": "Optional file found: template.yaml (3.3 KB)",
+            "timestamp": "2025-09-13T10:28:45.009Z"
+          },
+          {
+            "message": "Optional file found: samconfig.toml (1.2 KB)",
+            "timestamp": "2025-09-13T10:28:45.010Z"
+          },
+          {
+            "message": "Optional file found: backend/src/main/resources/application.yml (804.0 B)",
+            "timestamp": "2025-09-13T10:28:45.010Z"
+          },
+          {
+            "message": "Basic command available: echo",
+            "timestamp": "2025-09-13T10:28:45.049Z"
+          },
+          {
+            "message": "Basic command available: dir",
+            "timestamp": "2025-09-13T10:28:45.087Z"
+          },
+          {
+            "message": "Basic command available: if exist",
+            "timestamp": "2025-09-13T10:28:45.120Z"
+          },
+          {
+            "message": "Frontend file check command works: frontend/index.html",
+            "timestamp": "2025-09-13T10:28:45.152Z"
+          },
+          {
+            "message": "Frontend file check command works: frontend/css/style.css",
+            "timestamp": "2025-09-13T10:28:45.185Z"
+          },
+          {
+            "message": "Frontend file check command works: frontend/js/app.js",
+            "timestamp": "2025-09-13T10:28:45.217Z"
+          },
+          {
+            "message": "Frontend file check command works: frontend/js/api-client.js",
+            "timestamp": "2025-09-13T10:28:45.250Z"
+          },
+          {
+            "message": "Frontend directory listing command works",
+            "timestamp": "2025-09-13T10:28:45.285Z"
+          },
+          {
+            "message": "Java command available",
+            "timestamp": "2025-09-13T10:28:45.553Z"
+          },
+          {
+            "message": "Maven command available",
+            "timestamp": "2025-09-13T10:28:46.391Z"
+          },
+          {
+            "message": "Backend pom.xml exists",
+            "timestamp": "2025-09-13T10:28:46.430Z"
+          },
+          {
+            "message": "Maven configuration is valid",
+            "timestamp": "2025-09-13T10:28:50.721Z"
+          },
+          {
+            "message": "Node.js available: v16.18.0",
+            "timestamp": "2025-09-13T10:28:50.825Z"
+          },
+          {
+            "message": "npm available: 8.19.2",
+            "timestamp": "2025-09-13T10:28:52.488Z"
+          },
+          {
+            "message": "Git available: git version 2.49.0.windows.1",
+            "timestamp": "2025-09-13T10:28:52.651Z"
+          },
+          {
+            "message": "Frontend has 0 dependencies defined",
+            "timestamp": "2025-09-13T10:28:52.652Z"
+          },
+          {
+            "message": "Frontend build script defined",
+            "timestamp": "2025-09-13T10:28:52.652Z"
+          },
+          {
+            "message": "Backend dependency found: spring-boot-starter",
+            "timestamp": "2025-09-13T10:28:52.653Z"
+          },
+          {
+            "message": "Backend dependency found: spring-boot-starter-web",
+            "timestamp": "2025-09-13T10:28:52.654Z"
+          },
+          {
+            "message": "Backend dependency found: aws-lambda-java-core",
+            "timestamp": "2025-09-13T10:28:52.654Z"
+          },
+          {
+            "message": "Backend Java version: 17",
+            "timestamp": "2025-09-13T10:28:52.654Z"
+          },
+          {
+            "message": "Maven wrapper available",
+            "timestamp": "2025-09-13T10:28:52.654Z"
+          }
+        ]
+      },
+      "timestamp": "2025-09-13T10:28:52.668Z"
+    },
+    "testDeployment": {
+      "status": "SKIPPED",
+      "results": null
+    },
+    "integrationVerification": {
+      "status": "SUCCESS",
+      "results": {
+        "timestamp": "2025-09-13T10:28:52.668Z",
+        "success": true,
+        "frontend": {
+          "pageAvailability": [
+            {
+              "url": "http://localhost:3334/",
+              "name": "Main page (index.html)",
+              "success": true,
+              "statusCode": 200,
+              "responseTime": 2,
+              "contentLength": "unknown",
+              "error": null,
+              "htmlValid": true,
+              "hasTitle": true
+            },
+            {
+              "url": "http://localhost:3334/index.html",
+              "name": "Index page direct access",
+              "success": true,
+              "statusCode": 200,
+              "responseTime": 3,
+              "contentLength": "unknown",
+              "error": null,
+              "htmlValid": true,
+              "hasTitle": true
+            }
+          ],
+          "staticResources": [
+            {
+              "url": "http://localhost:3334/css/style.css",
+              "path": "/css/style.css",
+              "type": "CSS",
+              "success": true,
+              "statusCode": 200,
+              "contentType": "text/css",
+              "contentLength": "unknown",
+              "responseTime": 3,
+              "error": null
+            },
+            {
+              "url": "http://localhost:3334/js/app.js",
+              "path": "/js/app.js",
+              "type": "JavaScript",
+              "success": true,
+              "statusCode": 200,
+              "contentType": "application/javascript",
+              "contentLength": "unknown",
+              "responseTime": 2,
+              "error": null
+            },
+            {
+              "url": "http://localhost:3334/js/api-client.js",
+              "path": "/js/api-client.js",
+              "type": "JavaScript",
+              "success": true,
+              "statusCode": 200,
+              "contentType": "application/javascript",
+              "contentLength": "unknown",
+              "responseTime": 2,
+              "error": null
+            },
+            {
+              "url": "http://localhost:3334/package.json",
+              "path": "/package.json",
+              "type": "JSON",
+              "success": true,
+              "statusCode": 200,
+              "contentType": "application/json",
+              "contentLength": "unknown",
+              "responseTime": 5,
+              "error": null
+            }
+          ]
+        },
+        "api": {
+          "endpoints": [
+            {
+              "url": "http://localhost:3334/health",
+              "path": "/health",
+              "method": "GET",
+              "name": "Health check",
+              "success": true,
+              "statusCode": 200,
+              "responseTime": 3,
+              "contentType": "application/json",
+              "responseData": {
+                "status": "OK",
+                "message": "Integration test Lambda function is running",
+                "timestamp": 1757759332699
+              },
+              "error": null
+            },
+            {
+              "url": "http://localhost:3334/actuator/health",
+              "path": "/actuator/health",
+              "method": "GET",
+              "name": "Actuator health",
+              "success": true,
+              "statusCode": 200,
+              "responseTime": 2,
+              "contentType": "application/json",
+              "responseData": {
+                "status": "UP",
+                "timestamp": 1757759332701,
+                "checks": {
+                  "database": "UP",
+                  "diskSpace": "UP"
+                }
+              },
+              "error": null
+            },
+            {
+              "url": "http://localhost:3334/api/status",
+              "path": "/api/status",
+              "method": "GET",
+              "name": "API status",
+              "success": true,
+              "statusCode": 200,
+              "responseTime": 1,
+              "contentType": "application/json",
+              "responseData": {
+                "status": "OK",
+                "message": "Integration test Spring Boot server is running",
+                "timestamp": 1757759332703,
+                "version": "1.0.0"
+              },
+              "error": null
+            },
+            {
+              "url": "http://localhost:3334/api/workload-status",
+              "path": "/api/workload-status",
+              "method": "GET",
+              "name": "Workload status list",
+              "success": true,
+              "statusCode": 200,
+              "responseTime": 2,
+              "contentType": "application/json",
+              "responseData": [
+                {
+                  "userId": "integration-user-1",
+                  "displayName": "Integration Test User 1",
+                  "workloadLevel": "MEDIUM",
+                  "projectCount": 3,
+                  "taskCount": 15
+                },
+                {
+                  "userId": "integration-user-2",
+                  "displayName": "Integration Test User 2",
+                  "workloadLevel": "HIGH",
+                  "projectCount": 5,
+                  "taskCount": 25
+                }
+              ],
+              "error": null
+            },
+            {
+              "url": "http://localhost:3334/api/workload-status/my",
+              "path": "/api/workload-status/my",
+              "method": "GET",
+              "name": "My workload status",
+              "success": true,
+              "statusCode": 200,
+              "responseTime": 2,
+              "contentType": "application/json",
+              "responseData": {
+                "userId": "current-integration-user",
+                "displayName": "Current Integration User",
+                "workloadLevel": "LOW",
+                "projectCount": 2,
+                "taskCount": 8
+              },
+              "error": null
+            },
+            {
+              "url": "http://localhost:3334/api/team-issues",
+              "path": "/api/team-issues",
+              "method": "GET",
+              "name": "Team issues list",
+              "success": true,
+              "statusCode": 200,
+              "responseTime": 3,
+              "contentType": "application/json",
+              "responseData": [
+                {
+                  "issueId": "integration-1",
+                  "userId": "integration-user-1",
+                  "displayName": "Integration Test User 1",
+                  "content": "Integration test issue 1",
+                  "status": "OPEN",
+                  "priority": "HIGH"
+                },
+                {
+                  "issueId": "integration-2",
+                  "userId": "integration-user-2",
+                  "displayName": "Integration Test User 2",
+                  "content": "Integration test issue 2",
+                  "status": "RESOLVED",
+                  "priority": "MEDIUM"
+                }
+              ],
+              "error": null
+            },
+            {
+              "url": "http://localhost:3334/api/team-issues/open",
+              "path": "/api/team-issues/open",
+              "method": "GET",
+              "name": "Open team issues",
+              "success": true,
+              "statusCode": 200,
+              "responseTime": 2,
+              "contentType": "application/json",
+              "responseData": [
+                {
+                  "issueId": "integration-1",
+                  "userId": "integration-user-1",
+                  "displayName": "Integration Test User 1",
+                  "content": "Integration test issue 1",
+                  "status": "OPEN",
+                  "priority": "HIGH"
+                }
+              ],
+              "error": null
+            },
+            {
+              "url": "http://localhost:3334/api/team-issues/statistics",
+              "path": "/api/team-issues/statistics",
+              "method": "GET",
+              "name": "Issue statistics",
+              "success": true,
+              "statusCode": 200,
+              "responseTime": 2,
+              "contentType": "application/json",
+              "responseData": {
+                "open": 8,
+                "resolved": 15,
+                "total": 23,
+                "highPriority": 3,
+                "mediumPriority": 12,
+                "lowPriority": 8
+              },
+              "error": null
+            }
+          ]
+        },
+        "errors": [],
+        "warnings": []
+      },
+      "timestamp": "2025-09-13T10:28:52.725Z"
+    },
+    "performanceTesting": {
+      "status": "SUCCESS",
+      "results": {
+        "passed": true,
+        "metrics": {
+          "pageLoadTime": 6,
+          "apiResponseTime": 2,
+          "staticResourceLoadTime": 2,
+          "totalLoadTime": 8
+        },
+        "threshold": 100
+      },
+      "timestamp": "2025-09-13T10:28:52.737Z"
+    },
+    "loadTesting": {
+      "status": "SUCCESS",
+      "results": {
+        "passed": true,
+        "totalRequests": 52,
+        "successfulRequests": 52,
+        "failedRequests": 0,
+        "averageResponseTime": 7.211538461538462,
+        "minResponseTime": 2,
+        "maxResponseTime": 17,
+        "responseTimes": [
+          2,
+          2,
+          5,
+          6,
+          10,
+          6,
+          8,
+          8,
+          8,
+          9,
+          6,
+          6,
+          4,
+          5,
+          8,
+          7,
+          8,
+          8,
+          8,
+          8,
+          17,
+          16,
+          10,
+          10,
+          7,
+          3,
+          4,
+          6,
+          3,
+          4,
+          5,
+          4,
+          11,
+          8,
+          12,
+          5,
+          7,
+          7,
+          11,
+          10,
+          7,
+          7,
+          7,
+          7,
+          5,
+          8,
+          7,
+          7,
+          6,
+          5,
+          9,
+          8
+        ],
+        "successRate": 100,
+        "duration": 3
+      },
+      "timestamp": "2025-09-13T10:28:55.769Z"
+    },
+    "productionVerification": {
+      "status": "SUCCESS",
+      "results": {
+        "passed": true,
+        "checks": {
+          "httpsEnabled": false,
+          "securityHeaders": true,
+          "cacheHeaders": true,
+          "compressionEnabled": true,
+          "errorHandling": false
+        },
+        "passedChecks": 3,
+        "totalChecks": 5
+      },
+      "timestamp": "2025-09-13T10:28:55.782Z"
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "metrics": {
+    "performance": {
+      "pageLoadTime": 6,
+      "apiResponseTime": 2,
+      "staticResourceLoadTime": 2,
+      "totalLoadTime": 8
+    },
+    "loadTest": {
+      "totalRequests": 52,
+      "successfulRequests": 52,
+      "failedRequests": 0,
+      "averageResponseTime": 7.211538461538462,
+      "minResponseTime": 2,
+      "maxResponseTime": 17,
+      "responseTimes": [
+        2,
+        2,
+        5,
+        6,
+        10,
+        6,
+        8,
+        8,
+        8,
+        9,
+        6,
+        6,
+        4,
+        5,
+        8,
+        7,
+        8,
+        8,
+        8,
+        8,
+        17,
+        16,
+        10,
+        10,
+        7,
+        3,
+        4,
+        6,
+        3,
+        4,
+        5,
+        4,
+        11,
+        8,
+        12,
+        5,
+        7,
+        7,
+        11,
+        10,
+        7,
+        7,
+        7,
+        7,
+        5,
+        8,
+        7,
+        7,
+        6,
+        5,
+        9,
+        8
+      ]
+    }
+  }
+}

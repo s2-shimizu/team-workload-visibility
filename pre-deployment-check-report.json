@@ -1,0 +1,226 @@
+{
+  "timestamp": "2025-09-13T10:48:55.283Z",
+  "summary": {
+    "successes": 45,
+    "warnings": 1,
+    "errors": 0,
+    "criticalErrors": 0,
+    "deploymentReady": true
+  },
+  "successes": [
+    {
+      "message": "amplify.yml version: 1",
+      "timestamp": "2025-09-13T10:48:51.062Z"
+    },
+    {
+      "message": "Frontend configuration structure validated",
+      "timestamp": "2025-09-13T10:48:51.062Z"
+    },
+    {
+      "message": "Backend configuration structure validated",
+      "timestamp": "2025-09-13T10:48:51.063Z"
+    },
+    {
+      "message": "Directory reference validated: frontend",
+      "timestamp": "2025-09-13T10:48:51.063Z"
+    },
+    {
+      "message": "Directory reference validated: backend/target",
+      "timestamp": "2025-09-13T10:48:51.063Z"
+    },
+    {
+      "message": "Command section validated: frontend.phases.preBuild",
+      "timestamp": "2025-09-13T10:48:51.064Z"
+    },
+    {
+      "message": "Command section validated: frontend.phases.build",
+      "timestamp": "2025-09-13T10:48:51.064Z"
+    },
+    {
+      "message": "Command section validated: frontend.phases.postBuild",
+      "timestamp": "2025-09-13T10:48:51.065Z"
+    },
+    {
+      "message": "Command section validated: backend.phases.preBuild",
+      "timestamp": "2025-09-13T10:48:51.065Z"
+    },
+    {
+      "message": "Command section validated: backend.phases.build",
+      "timestamp": "2025-09-13T10:48:51.066Z"
+    },
+    {
+      "message": "Command section validated: backend.phases.postBuild",
+      "timestamp": "2025-09-13T10:48:51.066Z"
+    },
+    {
+      "message": "amplify.yml syntax validation completed",
+      "timestamp": "2025-09-13T10:48:51.066Z"
+    },
+    {
+      "message": "Required file exists: amplify.yml (2.7 KB)",
+      "timestamp": "2025-09-13T10:48:51.068Z"
+    },
+    {
+      "message": "Required file exists: frontend/index.html (16.3 KB)",
+      "timestamp": "2025-09-13T10:48:51.069Z"
+    },
+    {
+      "message": "Required file exists: frontend/css/style.css (28.3 KB)",
+      "timestamp": "2025-09-13T10:48:51.070Z"
+    },
+    {
+      "message": "Required file exists: frontend/js/app.js (47.8 KB)",
+      "timestamp": "2025-09-13T10:48:51.070Z"
+    },
+    {
+      "message": "Required file exists: frontend/js/api-client.js (14.1 KB)",
+      "timestamp": "2025-09-13T10:48:51.071Z"
+    },
+    {
+      "message": "Required file exists: backend/pom.xml (11.2 KB)",
+      "timestamp": "2025-09-13T10:48:51.072Z"
+    },
+    {
+      "message": "Required directory exists: backend/src/main/java",
+      "timestamp": "2025-09-13T10:48:51.073Z"
+    },
+    {
+      "message": "Optional file found: frontend/package.json (821.0 B)",
+      "timestamp": "2025-09-13T10:48:51.073Z"
+    },
+    {
+      "message": "Optional file found: template.yaml (3.3 KB)",
+      "timestamp": "2025-09-13T10:48:51.074Z"
+    },
+    {
+      "message": "Optional file found: samconfig.toml (1.2 KB)",
+      "timestamp": "2025-09-13T10:48:51.075Z"
+    },
+    {
+      "message": "Optional file found: backend/src/main/resources/application.yml (804.0 B)",
+      "timestamp": "2025-09-13T10:48:51.075Z"
+    },
+    {
+      "message": "Basic command available: echo",
+      "timestamp": "2025-09-13T10:48:51.114Z"
+    },
+    {
+      "message": "Basic command available: dir",
+      "timestamp": "2025-09-13T10:48:51.145Z"
+    },
+    {
+      "message": "Basic command available: if exist",
+      "timestamp": "2025-09-13T10:48:51.166Z"
+    },
+    {
+      "message": "Frontend file check command works: frontend/index.html",
+      "timestamp": "2025-09-13T10:48:51.199Z"
+    },
+    {
+      "message": "Frontend file check command works: frontend/css/style.css",
+      "timestamp": "2025-09-13T10:48:51.228Z"
+    },
+    {
+      "message": "Frontend file check command works: frontend/js/app.js",
+      "timestamp": "2025-09-13T10:48:51.250Z"
+    },
+    {
+      "message": "Frontend file check command works: frontend/js/api-client.js",
+      "timestamp": "2025-09-13T10:48:51.277Z"
+    },
+    {
+      "message": "Frontend directory listing command works",
+      "timestamp": "2025-09-13T10:48:51.298Z"
+    },
+    {
+      "message": "Java command available",
+      "timestamp": "2025-09-13T10:48:51.475Z"
+    },
+    {
+      "message": "Maven command available",
+      "timestamp": "2025-09-13T10:48:51.959Z"
+    },
+    {
+      "message": "Backend pom.xml exists",
+      "timestamp": "2025-09-13T10:48:51.978Z"
+    },
+    {
+      "message": "Maven configuration is valid",
+      "timestamp": "2025-09-13T10:48:54.147Z"
+    },
+    {
+      "message": "Node.js available: v16.18.0",
+      "timestamp": "2025-09-13T10:48:54.208Z"
+    },
+    {
+      "message": "npm available: 8.19.2",
+      "timestamp": "2025-09-13T10:48:55.189Z"
+    },
+    {
+      "message": "Git available: git version 2.49.0.windows.1",
+      "timestamp": "2025-09-13T10:48:55.278Z"
+    },
+    {
+      "message": "Frontend has 0 dependencies defined",
+      "timestamp": "2025-09-13T10:48:55.279Z"
+    },
+    {
+      "message": "Frontend build script defined",
+      "timestamp": "2025-09-13T10:48:55.279Z"
+    },
+    {
+      "message": "Backend dependency found: spring-boot-starter",
+      "timestamp": "2025-09-13T10:48:55.280Z"
+    },
+    {
+      "message": "Backend dependency found: spring-boot-starter-web",
+      "timestamp": "2025-09-13T10:48:55.281Z"
+    },
+    {
+      "message": "Backend dependency found: aws-lambda-java-core",
+      "timestamp": "2025-09-13T10:48:55.281Z"
+    },
+    {
+      "message": "Backend Java version: 17",
+      "timestamp": "2025-09-13T10:48:55.281Z"
+    },
+    {
+      "message": "Maven wrapper available",
+      "timestamp": "2025-09-13T10:48:55.281Z"
+    }
+  ],
+  "warnings": [
+    {
+      "message": "Frontend node_modules not found (run npm install)",
+      "timestamp": "2025-09-13T10:48:55.280Z"
+    }
+  ],
+  "errors": [],
+  "checkedItems": [
+    {
+      "type": "tool_requirement",
+      "tool": "java",
+      "context": "backend.phases.preBuild"
+    },
+    {
+      "type": "tool_requirement",
+      "tool": "maven",
+      "context": "backend.phases.preBuild"
+    },
+    {
+      "type": "tool_requirement",
+      "tool": "java",
+      "context": "backend.phases.preBuild"
+    },
+    {
+      "type": "tool_requirement",
+      "tool": "maven",
+      "context": "backend.phases.build"
+    },
+    {
+      "type": "tool_requirement",
+      "tool": "maven",
+      "context": "backend.phases.build"
+    }
+  ]
+}

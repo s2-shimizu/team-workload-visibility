@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チーム状況ダッシュボード</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎯 チーム状況ダッシュボード</h1>
+            <nav class="nav">
+                <button class="nav-btn active" data-tab="dashboard">ダッシュボード</button>
+                <button class="nav-btn" data-tab="report">日報投稿</button>
+                <button class="nav-btn" data-tab="calendar">カレンダー</button>
+            </nav>
+        </header>
+
+        <main class="main">
+            <div class="dashboard-grid">
+                <!-- 負荷状況セクション -->
+                <section class="workload-status">
+                    <div class="section-header">
+                        <h2>⚡ チーム負荷状況</h2>
+                        <button id="updateWorkloadBtn" class="update-btn">負荷状況を更新</button>
+                    </div>
+                    <div class="workload-cards" id="workloadStatusCards">
+                        <!-- 動的に生成 -->
+                    </div>
+                </section>
+
+                <!-- 困りごとセクション -->
+                <section class="team-issues">
+                    <div class="section-header">
+                        <h2>💬 チーム困りごと</h2>
+                        <button id="addIssueBtn" class="update-btn">困りごとを投稿</button>
+                    </div>
+                    <div class="issues-list" id="teamIssuesList">
+                        <!-- 動的に生成 -->
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- 負荷状況更新モーダル -->
+    <div id="workloadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚡ 負荷状況を更新</h3>
+                <button class="modal-close" id="workloadModalClose">&times;</button>
+            </div>
+            <form id="workloadForm" class="modal-form">
+                <div class="form-group">
+                    <label for="workloadLevelSelect">負荷レベル *</label>
+                    <div class="workload-level-selector">
+                        <input type="radio" id="levelLow" name="workloadLevel" value="LOW" required>
+                        <label for="levelLow" class="level-option level-low">
+                            <span class="level-emoji">😊</span>
+                            <span class="level-text">低</span>
+                        </label>
+                        
+                        <input type="radio" id="levelMedium" name="workloadLevel" value="MEDIUM">
+                        <label for="levelMedium" class="level-option level-medium">
+                            <span class="level-emoji">😐</span>
+                            <span class="level-text">中</span>
+                        </label>
+                        
+                        <input type="radio" id="levelHigh" name="workloadLevel" value="HIGH">
+                        <label for="levelHigh" class="level-option level-high">
+                            <span class="level-emoji">😰</span>
+                            <span class="level-text">高</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="projectCount">担当案件数（任意）</label>
+                    <input type="number" id="projectCount" name="projectCount" min="0" max="20" 
+                           placeholder="例: 3">
+                </div>
+
+                <div class="form-group">
+                    <label for="taskCount">進行中タスク数（任意）</label>
+                    <input type="number" id="taskCount" name="taskCount" min="0" max="100" 
+                           placeholder="例: 15">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="workloadCancelBtn">キャンセル</button>
+                    <button type="submit" class="btn-primary">更新する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 困りごと投稿モーダル -->
+    <div id="issueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💬 困りごとを投稿</h3>
+                <button class="modal-close" id="issueModalClose">&times;</button>
+            </div>
+            <form id="issueForm" class="modal-form">
+                <div class="form-group">
+                    <label for="issueContent">困りごと・課題の内容 *</label>
+                    <textarea id="issueContent" name="content" required 
+                              placeholder="困っていることや課題について詳しく教えてください。"
+                              rows="6"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="issueCancelBtn">キャンセル</button>
+                    <button type="submit" class="btn-primary">投稿する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // AWS環境用のAPI設定
+        let API_BASE_URL = 'http://localhost:8081/api'; // デフォルト（ローカル開発用）
+        
+        // AWS環境の場合はAPI Gateway URLを使用
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            // 本番環境では環境変数またはビルド時に設定されるAPI URLを使用
+            API_BASE_URL = window.AWS_API_URL || 'https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev';
+        }
+
+        console.log('API Base URL:', API_BASE_URL);
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('AWS対応ダッシュボード初期化開始');
+            
+            // ボタンイベントリスナー
+            document.getElementById('updateWorkloadBtn').addEventListener('click', openWorkloadModal);
+            document.getElementById('addIssueBtn').addEventListener('click', openIssueModal);
+            
+            // モーダル関連
+            initializeModals();
+            
+            // データ読み込み
+            loadDashboardData();
+            
+            console.log('AWS対応ダッシュボード初期化完了');
+        });
+
+        // ダッシュボードデータ読み込み
+        async function loadDashboardData() {
+            await Promise.all([
+                loadWorkloadStatus(),
+                loadTeamIssues()
+            ]);
+        }
+
+        // 負荷状況読み込み
+        async function loadWorkloadStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/workload-status`);
+                const data = await response.json();
+                displayWorkloadStatus(data);
+            } catch (error) {
+                console.error('負荷状況読み込みエラー:', error);
+                document.getElementById('workloadStatusCards').innerHTML = 
+                    '<div class="error">負荷状況の読み込みに失敗しました</div>';
+            }
+        }
+
+        // 困りごと読み込み
+        async function loadTeamIssues() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/team-issues`);
+                const data = await response.json();
+                displayTeamIssues(data);
+            } catch (error) {
+                console.error('困りごと読み込みエラー:', error);
+                document.getElementById('teamIssuesList').innerHTML = 
+                    '<div class="error">困りごとの読み込みに失敗しました</div>';
+            }
+        }
+
+        // 負荷状況表示
+        function displayWorkloadStatus(statuses) {
+            const container = document.getElementById('workloadStatusCards');
+            container.innerHTML = '';
+
+            statuses.forEach(status => {
+                const card = document.createElement('div');
+                card.className = `workload-card level-${status.workloadLevel}`;
+                card.innerHTML = `
+                    <div class="user-name">${status.displayName}</div>
+                    <div class="workload-level">
+                        <span class="workload-level-badge ${status.workloadLevel}">
+                            ${getWorkloadLevelText(status.workloadLevel)}
+                        </span>
+                        <span>${getWorkloadLevelEmoji(status.workloadLevel)}</span>
+                    </div>
+                    <div class="workload-details">
+                        ${status.projectCount ? `<div>📁 ${status.projectCount}案件</div>` : ''}
+                        ${status.taskCount ? `<div>📋 ${status.taskCount}タスク</div>` : ''}
+                    </div>
+                    <div class="last-updated">最終更新: ${formatDateTime(status.updatedAt)}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 困りごと表示
+        function displayTeamIssues(issues) {
+            const container = document.getElementById('teamIssuesList');
+            container.innerHTML = '';
+
+            issues.forEach(issue => {
+                const item = document.createElement('div');
+                item.className = `issue-item ${issue.status.toLowerCase()}`;
+                item.innerHTML = `
+                    <div class="issue-header">
+                        <div class="issue-author">
+                            <span class="name">${issue.displayName}</span>
+                            <span class="date">${formatDateTime(issue.createdAt)}</span>
+                        </div>
+                        <div class="issue-status">
+                            <span class="status-badge ${issue.status}">
+                                ${issue.status === 'OPEN' ? '未解決' : '解決済み'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="issue-content">${issue.content}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // モーダル初期化
+        function initializeModals() {
+            // 負荷状況モーダル
+            const workloadModal = document.getElementById('workloadModal');
+            const workloadForm = document.getElementById('workloadForm');
+            
+            document.getElementById('workloadModalClose').addEventListener('click', () => {
+                workloadModal.classList.remove('show');
+            });
+            
+            document.getElementById('workloadCancelBtn').addEventListener('click', () => {
+                workloadModal.classList.remove('show');
+            });
+            
+            workloadForm.addEventListener('submit', handleWorkloadSubmit);
+
+            // 困りごとモーダル
+            const issueModal = document.getElementById('issueModal');
+            const issueForm = document.getElementById('issueForm');
+            
+            document.getElementById('issueModalClose').addEventListener('click', () => {
+                issueModal.classList.remove('show');
+            });
+            
+            document.getElementById('issueCancelBtn').addEventListener('click', () => {
+                issueModal.classList.remove('show');
+            });
+            
+            issueForm.addEventListener('submit', handleIssueSubmit);
+        }
+
+        // モーダル開く
+        function openWorkloadModal() {
+            console.log('負荷状況モーダルを開きます');
+            document.getElementById('workloadModal').classList.add('show');
+        }
+
+        function openIssueModal() {
+            console.log('困りごとモーダルを開きます');
+            document.getElementById('issueModal').classList.add('show');
+        }
+
+        // フォーム送信処理
+        async function handleWorkloadSubmit(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = {
+                workloadLevel: formData.get('workloadLevel')
+            };
+            
+            if (formData.get('projectCount')) {
+                data.projectCount = parseInt(formData.get('projectCount'));
+            }
+            
+            if (formData.get('taskCount')) {
+                data.taskCount = parseInt(formData.get('taskCount'));
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/workload-status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showNotification('負荷状況を更新しました', 'success');
+                    document.getElementById('workloadModal').classList.remove('show');
+                    event.target.reset();
+                    loadWorkloadStatus();
+                } else {
+                    throw new Error('更新に失敗しました');
+                }
+            } catch (error) {
+                console.error('負荷状況更新エラー:', error);
+                showNotification('更新に失敗しました', 'error');
+            }
+        }
+
+        async function handleIssueSubmit(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = {
+                content: formData.get('content')
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/team-issues`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showNotification('困りごとを投稿しました', 'success');
+                    document.getElementById('issueModal').classList.remove('show');
+                    event.target.reset();
+                    loadTeamIssues();
+                } else {
+                    throw new Error('投稿に失敗しました');
+                }
+            } catch (error) {
+                console.error('困りごと投稿エラー:', error);
+                showNotification('投稿に失敗しました', 'error');
+            }
+        }
+
+        // ユーティリティ関数
+        function getWorkloadLevelText(level) {
+            const texts = { 'LOW': '低', 'MEDIUM': '中', 'HIGH': '高' };
+            return texts[level] || '未設定';
+        }
+
+        function getWorkloadLevelEmoji(level) {
+            const emojis = { 'LOW': '😊', 'MEDIUM': '😐', 'HIGH': '😰' };
+            return emojis[level] || '❓';
+        }
+
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / (1000 * 60));
+            
+            if (diffMins < 1) return 'たった今';
+            if (diffMins < 60) return `${diffMins}分前`;
+            if (diffMins < 1440) return `${Math.floor(diffMins / 60)}時間前`;
+            return date.toLocaleDateString('ja-JP');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

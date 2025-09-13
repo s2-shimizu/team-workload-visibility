@@ -1,0 +1,14 @@
+[
+  {
+    "originalDeployment": "test-failed-1757757751511",
+    "rollbackDeployment": {
+      "id": "rollback-1757757751511",
+      "type": "ROLLBACK",
+      "targetDeployment": "deploy-success-1",
+      "startTime": "2025-09-13T10:02:31.511Z",
+      "status": "SUCCESS",
+      "endTime": "2025-09-13T10:02:34.524Z"
+    },
+    "timestamp": "2025-09-13T10:02:34.525Z"
+  }
+]

@@ -1,0 +1,255 @@
+# GitHub Actions Workflow for AWS Amplify Continuous Deployment
+# This template enhances the default Amplify deployment with additional monitoring and notifications
+
+name: Amplify Continuous Deployment
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AMPLIFY_APP_ID: ${{ secrets.AMPLIFY_APP_ID }}
+  NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+  WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+
+jobs:
+  pre-deployment-checks:
+    runs-on: ubuntu-latest
+    name: Pre-deployment Validation
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Validate Amplify Configuration
+      run: |
+        echo "🔍 Validating amplify.yml configuration..."
+        node config-syntax-checker.js amplify.yml
+        
+        echo "✅ Checking required files..."
+        test -f frontend/index.html || (echo "❌ frontend/index.html not found" && exit 1)
+        test -f backend/pom.xml || (echo "❌ backend/pom.xml not found" && exit 1)
+
+    - name: Verify GitHub Trigger Configuration
+      run: |
+        echo "🔍 Verifying GitHub trigger configuration..."
+        node continuous-deployment-cli.js verify-trigger
+
+    - name: Run Pre-deployment Tests
+      run: |
+        echo "🧪 Running pre-deployment tests..."
+        # Frontend validation
+        cd frontend && node validate-files.js
+        
+        # Backend validation
+        cd ../backend && mvn validate
+
+  monitor-deployment:
+    runs-on: ubuntu-latest
+    name: Monitor Amplify Deployment
+    needs: pre-deployment-checks
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Start Deployment Monitoring
+      id: monitor
+      run: |
+        echo "📊 Starting deployment monitoring..."
+        DEPLOYMENT_ID="github-${GITHUB_RUN_ID}"
+        echo "deployment_id=${DEPLOYMENT_ID}" >> $GITHUB_OUTPUT
+        
+        # Start monitoring in background
+        node continuous-deployment-cli.js track-deployment $DEPLOYMENT_ID &
+        MONITOR_PID=$!
+        echo "monitor_pid=${MONITOR_PID}" >> $GITHUB_OUTPUT
+
+    - name: Wait for Amplify Deployment
+      run: |
+        echo "⏳ Waiting for Amplify deployment to complete..."
+        # In a real scenario, this would poll Amplify API for deployment status
+        sleep 30
+
+    - name: Verify Deployment Success
+      id: verify
+      run: |
+        echo "✅ Verifying deployment success..."
+        node deployment-verification.js
+        
+        if [ $? -eq 0 ]; then
+          echo "deployment_success=true" >> $GITHUB_OUTPUT
+        else
+          echo "deployment_success=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+
+    - name: Send Success Notification
+      if: steps.verify.outputs.deployment_success == 'true'
+      run: |
+        echo "📧 Sending success notification..."
+        echo "Deployment ${{ steps.monitor.outputs.deployment_id }} completed successfully" | \
+        curl -X POST -H "Content-Type: application/json" \
+             -d '{"text":"Deployment successful: ${{ github.sha }}"}' \
+             ${{ env.WEBHOOK_URL }} || true
+
+  handle-deployment-failure:
+    runs-on: ubuntu-latest
+    name: Handle Deployment Failure
+    needs: monitor-deployment
+    if: failure()
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Send Failure Notification
+      run: |
+        echo "🚨 Sending failure notification..."
+        node continuous-deployment-cli.js test-notification
+
+    - name: Trigger Automatic Rollback
+      if: github.ref == 'refs/heads/main'
+      run: |
+        echo "🔄 Triggering automatic rollback..."
+        node continuous-deployment-cli.js test-rollback
+
+    - name: Create Issue on Failure
+      if: github.ref == 'refs/heads/main'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `Deployment Failed - ${context.sha.substring(0, 7)}`,
+            body: `
+            ## Deployment Failure Report
+            
+            **Commit:** ${context.sha}
+            **Branch:** ${context.ref}
+            **Workflow:** ${context.workflow}
+            **Run ID:** ${context.runId}
+            
+            The deployment failed and automatic rollback has been triggered.
+            Please check the workflow logs for more details.
+            
+            **Next Steps:**
+            1. Review the error logs
+            2. Fix the issues in the code
+            3. Test locally before pushing
+            4. Create a new commit with fixes
+            
+            This issue will be automatically closed when the next deployment succeeds.
+            `,
+            labels: ['deployment-failure', 'urgent']
+          })
+
+  post-deployment-verification:
+    runs-on: ubuntu-latest
+    name: Post-deployment Verification
+    needs: monitor-deployment
+    if: success()
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Run Health Checks
+      run: |
+        echo "🏥 Running post-deployment health checks..."
+        
+        # Wait for deployment to be fully available
+        sleep 60
+        
+        # Run verification tests
+        node deployment-verification.js --full-check
+
+    - name: Performance Testing
+      run: |
+        echo "⚡ Running basic performance tests..."
+        # Basic performance check (would integrate with tools like Lighthouse)
+        curl -w "@curl-format.txt" -o /dev/null -s "https://your-app-url.amplifyapp.com" || true
+
+    - name: Close Previous Failure Issues
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const issues = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            labels: 'deployment-failure',
+            state: 'open'
+          });
+          
+          for (const issue of issues.data) {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `✅ Deployment has been fixed with commit ${context.sha.substring(0, 7)}. Closing this issue.`
+            });
+            
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              state: 'closed'
+            });
+          }
+
+  security-scan:
+    runs-on: ubuntu-latest
+    name: Security Scan
+    needs: pre-deployment-checks
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Run Security Scan
+      run: |
+        echo "🔒 Running security scan..."
+        
+        # Check for secrets in code
+        echo "Checking for potential secrets..."
+        grep -r -i "password\|secret\|key\|token" --exclude-dir=.git --exclude="*.md" . || true
+        
+        # Check dependencies for vulnerabilities (would use npm audit, etc.)
+        echo "Checking dependencies..."
+        cd frontend && npm audit --audit-level moderate || true
+
+    - name: Validate Environment Variables
+      run: |
+        echo "🔧 Validating environment variables..."
+        node validate-aws-config.js

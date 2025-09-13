@@ -1,0 +1,30 @@
+[
+  {
+    "type": "email",
+    "timestamp": "2025-09-13T10:01:10.571Z",
+    "to": "test@example.com",
+    "subject": "Deployment Failed - test-failed-1757757670567",
+    "body": "Deployment Failure Alert\n\nDeployment ID: test-failed-1757757670567\nFailed Phase: build\nError: Test failure for notification testing\nTimestamp: Sat Sep 13 2025 19:01:10 GMT+0900 (日本標準時)\n\nRecent Logs:\n[Sat Sep 13 2025 19:01:10 GMT+0900 (日本標準時)] build: Build failed\n\nPlease check the AWS Amplify console for more details."
+  },
+  {
+    "type": "email",
+    "timestamp": "2025-09-13T10:01:16.167Z",
+    "to": "integration@example.com",
+    "subject": "Deployment Failed - integration-test-1757757670585",
+    "body": "Deployment Failure Alert\n\nDeployment ID: integration-test-1757757670585\nFailed Phase: unknown\nError: Simulated deployment failure\nTimestamp: Sat Sep 13 2025 19:01:16 GMT+0900 (日本標準時)\n\nRecent Logs:\n[Sat Sep 13 2025 19:01:10 GMT+0900 (日本標準時)] provision: Provisioning resources...\n[Sat Sep 13 2025 19:01:13 GMT+0900 (日本標準時)] build: Building application...\n\nPlease check the AWS Amplify console for more details."
+  },
+  {
+    "type": "email",
+    "timestamp": "2025-09-13T10:02:31.502Z",
+    "to": "test@example.com",
+    "subject": "Deployment Failed - test-failed-1757757751495",
+    "body": "Deployment Failure Alert\n\nDeployment ID: test-failed-1757757751495\nFailed Phase: build\nError: Test failure for notification testing\nTimestamp: Sat Sep 13 2025 19:02:31 GMT+0900 (日本標準時)\n\nRecent Logs:\n[Sat Sep 13 2025 19:02:31 GMT+0900 (日本標準時)] build: Build failed\n\nPlease check the AWS Amplify console for more details."
+  },
+  {
+    "type": "email",
+    "timestamp": "2025-09-13T10:02:37.900Z",
+    "to": "integration@example.com",
+    "subject": "Deployment Failed - integration-test-1757757754533",
+    "body": "Deployment Failure Alert\n\nDeployment ID: integration-test-1757757754533\nFailed Phase: unknown\nError: Simulated deployment failure\nTimestamp: Sat Sep 13 2025 19:02:37 GMT+0900 (日本標準時)\n\nRecent Logs:\n[Sat Sep 13 2025 19:02:34 GMT+0900 (日本標準時)] provision: Provisioning resources...\n[Sat Sep 13 2025 19:02:35 GMT+0900 (日本標準時)] build: Building application...\n\nPlease check the AWS Amplify console for more details."
+  }
+]

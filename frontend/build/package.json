@@ -7,8 +7,6 @@
     "build:simple": "mkdir -p build && cp -r *.html css js build/",
     "validate": "node validate-files.js",
     "verify": "node verify-build.js",
-    "verify-deployment": "node ../deployment-verification.js",
-    "test-verification": "node ../test-verification.js",
     "dev": "python -m http.server 8080",
     "start": "python -m http.server 8080",
     "clean": "if exist build rmdir /s /q build && if exist dist rmdir /s /q dist",

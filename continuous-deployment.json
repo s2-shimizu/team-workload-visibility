@@ -1,0 +1,26 @@
+{
+  "amplifyAppId": "",
+  "branchName": "main",
+  "notificationEmail": "",
+  "webhookUrl": "",
+  "maxRetries": 5,
+  "rollbackEnabled": true,
+  "monitoringEnabled": true,
+  "notificationSettings": {
+    "emailOnFailure": true,
+    "webhookOnFailure": true,
+    "emailOnSuccess": false,
+    "webhookOnSuccess": false
+  },
+  "rollbackSettings": {
+    "autoRollbackEnabled": true,
+    "rollbackTimeoutMinutes": 30,
+    "maxRollbackAttempts": 2
+  },
+  "deploymentSettings": {
+    "timeoutMinutes": 45,
+    "retryDelayMinutes": 5,
+    "healthCheckEnabled": true,
+    "healthCheckUrl": ""
+  }
+}

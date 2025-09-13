@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-09-13T09:08:59.637Z",
+  "valid": true,
+  "warnings": [
+    "js/app.js: Contains console.log statements (consider removing for production)",
+    "js/auth-manager.js: Contains console.log statements (consider removing for production)",
+    "js/aws-config.js: No functions or classes found"
+  ],
+  "errors": []
+}

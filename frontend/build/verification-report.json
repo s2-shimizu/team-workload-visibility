@@ -1,0 +1,30 @@
+{
+  "timestamp": "2025-09-13T09:09:00.993Z",
+  "success": true,
+  "testResults": [
+    {
+      "url": "/",
+      "status": "success"
+    },
+    {
+      "url": "/css/style.css",
+      "status": "success"
+    },
+    {
+      "url": "/js/app.js",
+      "status": "success"
+    },
+    {
+      "url": "/js/api-client.js",
+      "status": "success"
+    },
+    {
+      "url": "/package.json",
+      "status": "success"
+    }
+  ],
+  "warnings": [
+    "Unexpected file in build: BUILD.md"
+  ],
+  "errors": []
+}

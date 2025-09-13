@@ -1,0 +1,23 @@
+{
+  "timestamp": "2025-09-13T09:08:59.801Z",
+  "success": true,
+  "copiedFiles": [
+    "BUILD.md",
+    "css\\style.css",
+    "index.html",
+    "js\\api-client.js",
+    "js\\app.js",
+    "js\\auth-manager.js",
+    "js\\aws-config.js",
+    "js\\data-manager.js",
+    "package.json",
+    "validation-report.json"
+  ],
+  "warnings": [
+    "index.html: No JavaScript references found",
+    "js/app.js: Contains console.log statements",
+    "js/auth-manager.js: Contains console.log statements"
+  ],
+  "errors": [],
+  "buildSize": 152828
+}
