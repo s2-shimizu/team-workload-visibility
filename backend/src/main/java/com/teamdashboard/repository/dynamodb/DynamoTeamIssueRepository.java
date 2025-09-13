@@ -130,6 +130,7 @@ public class DynamoTeamIssueRepository {
         item.setItemType("ISSUE");
         
         // TeamIssueをMapに変換
+        @SuppressWarnings("unchecked")
         Map<String, Object> data = objectMapper.convertValue(teamIssue, Map.class);
         item.setData(data);
         

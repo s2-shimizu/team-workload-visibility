@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Team Dashboard Backend - Serverless backend for team workload visibility application
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1024
+    Runtime: java17
+    Environment:
+      Variables:
+        SPRING_PROFILES_ACTIVE: lambda,dynamodb
+        JAVA_TOOL_OPTIONS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.awt.headless=true"
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment (dev/staging/prod)
+
+Resources:
+  TeamDashboardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'team-dashboard-api-${Environment}'
+      CodeUri: backend/
+      Handler: com.teamdashboard.LambdaHandler::handleRequest
+      Description: Team Dashboard API Lambda function
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_NAME: !Ref TeamDashboardTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref TeamDashboardApi
+        RootApiEvent:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+            RestApiId: !Ref TeamDashboardApi
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TeamDashboardTable
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+
+  TeamDashboardApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub 'team-dashboard-api-${Environment}'
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+
+  TeamDashboardTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'TeamDashboard-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+Outputs:
+  ApiGatewayEndpoint:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${TeamDashboardApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/"
+    Export:
+      Name: !Sub "${AWS::StackName}-ApiEndpoint"
+  
+  FunctionName:
+    Description: "Lambda Function Name"
+    Value: !Ref TeamDashboardFunction
+    Export:
+      Name: !Sub "${AWS::StackName}-FunctionName"

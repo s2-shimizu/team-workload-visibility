@@ -356,3 +356,58 @@
   - 認証機能と新機能の連携テストを実装
   - パフォーマンステストとレスポンス時間測定を実行
   - _要件: 4.1, 4.2_
+
+- [x] 8. Lambda統合とSpring Boot復旧
+
+
+
+
+  - SimpleLambdaHandlerから本格的なSpring Boot統合に移行
+  - DynamoDB統合を有効化して実際のデータ操作を実装
+  - 既存のコントローラー、サービス、リポジトリを統合
+  - _要件: 全要件の本格実装_
+
+- [x] 8.1 Spring Boot Lambda統合の復旧
+
+
+  - template.yamlのハンドラーをLambdaHandlerに変更
+  - Spring Boot設定の最適化とLambda環境での動作確認
+  - フィルター重複問題の解決策を適用
+  - コールドスタート最適化の実装
+  - _要件: 全要件のインフラ基盤_
+
+- [x] 8.2 DynamoDB統合の有効化
+
+
+  - DynamoDBConfigの設定を有効化
+  - DynamoDBTableCreatorでテーブル初期化
+  - 既存のDynamoDBリポジトリとの統合
+  - テストデータの投入とデータ構造の確認
+  - _要件: 1.1, 2.1, 3.1_
+
+- [x] 8.3 APIエンドポイントの統合
+
+
+  - DynamoWorkloadStatusControllerの統合
+  - DynamoTeamIssueControllerの統合
+  - 既存のSpring Bootコントローラーとの統合
+  - エラーハンドリングとレスポンス形式の統一
+  - _要件: 1.1, 2.1, 3.1, 3.2, 3.3_
+
+- [x] 8.4 サービスレイヤーの統合
+
+
+  - DynamoWorkloadStatusServiceの統合
+  - DynamoTeamIssueServiceの統合
+  - ビジネスロジックの実装と検証
+  - データ変換とバリデーションの実装
+  - _要件: 2.1, 2.3, 3.1, 3.2_
+
+- [x] 8.5 フロントエンド統合テスト
+
+
+  - 実際のDynamoDBデータでのフロントエンド動作確認
+  - API呼び出しとデータ表示の検証
+  - エラーハンドリングとユーザー体験の確認
+  - パフォーマンステストと最適化
+  - _要件: 1.3, 2.3, 3.2, 4.1, 4.2_

@@ -9,6 +9,7 @@ import com.teamdashboard.service.WorkloadStatusService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,9 +29,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * WorkloadStatusControllerの単体テスト
  */
-@WebMvcTest(controllers = WorkloadStatusController.class, 
+@WebMvcTest(controllers = WorkloadStatusController_Disabled.class, 
            excludeAutoConfiguration = {org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class})
 @DisplayName("WorkloadStatusController テスト")
+@Disabled("Controller is disabled - using DynamoDB version instead")
 class WorkloadStatusControllerTest {
 
     @Autowired

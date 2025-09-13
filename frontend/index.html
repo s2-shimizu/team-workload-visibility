@@ -18,133 +18,31 @@
         </header>
 
         <main class="main">
-            <!-- ダッシュボードタブ -->
-            <div id="dashboard" class="tab-content active">
-                <div class="dashboard-grid">
-                    <!-- 負荷状況セクション -->
-                    <section class="workload-status">
-                        <div class="section-header">
-                            <h2>⚡ チーム負荷状況</h2>
-                            <button id="updateWorkloadBtn" class="update-btn">負荷状況を更新</button>
-                        </div>
-                        <div class="workload-cards" id="workloadStatusCards">
-                            <!-- 動的に生成 -->
-                        </div>
-                        <div class="data-freshness" id="workloadDataFreshness">
-                            データを読み込み中...
-                        </div>
-                    </section>
-
-                    <section class="team-status">
-                        <h2>📊 チーム状況</h2>
-                        <div class="status-cards" id="teamStatusCards">
-                            <!-- 動的に生成 -->
-                        </div>
-                    </section>
-
-                    <!-- 困りごとセクション -->
-                    <section class="team-issues">
-                        <div class="section-header">
-                            <h2>💬 チーム困りごと</h2>
-                            <button id="addIssueBtn" class="update-btn">困りごとを投稿</button>
-                        </div>
-                        <div class="issues-filter">
-                            <button class="filter-btn active" data-status="all">すべて</button>
-                            <button class="filter-btn" data-status="OPEN">未解決</button>
-                            <button class="filter-btn" data-status="RESOLVED">解決済み</button>
-                        </div>
-                        <div class="issues-list" id="teamIssuesList">
-                            <!-- 動的に生成 -->
-                        </div>
-                        <div class="data-freshness" id="issuesDataFreshness">
-                            データを読み込み中...
-                        </div>
-                    </section>
-
-                    <section class="recent-reports">
-                        <h2>📝 最新の日報</h2>
-                        <div class="filter-controls">
-                            <select id="dateFilter">
-                                <option value="today">今日</option>
-                                <option value="yesterday">昨日</option>
-                                <option value="week" selected>過去7日</option>
-                            </select>
-                        </div>
-                        <div class="reports-list" id="recentReportsList">
-                            <!-- 動的に生成 -->
-                        </div>
-                    </section>
-                </div>
-            </div>
-
-            <!-- 日報投稿タブ -->
-            <div id="report" class="tab-content">
-                <section class="report-form-section">
-                    <h2>📝 日報投稿</h2>
-                    <form id="reportForm" class="report-form">
-                        <div class="form-group">
-                            <label for="workContent">作業内容 *</label>
-                            <textarea id="workContent" name="workContent" required 
-                                placeholder="今日の作業内容を入力してください"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="insights">気づき・学び</label>
-                            <textarea id="insights" name="insights" 
-                                placeholder="今日の気づきや学んだことがあれば入力してください"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="issues">困りごと・課題</label>
-                            <textarea id="issues" name="issues" 
-                                placeholder="困っていることや課題があれば入力してください"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="workloadLevel">負荷レベル *</label>
-                            <div class="workload-selector">
-                                <input type="radio" id="level1" name="workloadLevel" value="1" required>
-                                <label for="level1" class="workload-label level-1">😊 軽い</label>
-                                
-                                <input type="radio" id="level2" name="workloadLevel" value="2">
-                                <label for="level2" class="workload-label level-2">🙂 普通</label>
-                                
-                                <input type="radio" id="level3" name="workloadLevel" value="3">
-                                <label for="level3" class="workload-label level-3">😐 やや重い</label>
-                                
-                                <input type="radio" id="level4" name="workloadLevel" value="4">
-                                <label for="level4" class="workload-label level-4">😰 重い</label>
-                                
-                                <input type="radio" id="level5" name="workloadLevel" value="5">
-                                <label for="level5" class="workload-label level-5">😵 非常に重い</label>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="submit-btn">📤 日報を投稿</button>
-                    </form>
+            <div class="dashboard-grid">
+                <!-- 負荷状況セクション -->
+                <section class="workload-status">
+                    <div class="section-header">
+                        <h2>⚡ チーム負荷状況</h2>
+                        <button id="updateWorkloadBtn" class="update-btn">負荷状況を更新</button>
+                    </div>
+                    <div class="workload-cards" id="workloadStatusCards">
+                        <!-- 動的に生成 -->
+                    </div>
                 </section>
-            </div>
 
-            <!-- カレンダータブ -->
-            <div id="calendar" class="tab-content">
-                <section class="calendar-section">
-                    <h2>📅 カレンダー</h2>
-                    <div class="calendar-container">
-                        <div class="calendar-header">
-                            <button id="prevMonth">‹</button>
-                            <h3 id="currentMonth"></h3>
-                            <button id="nextMonth">›</button>
-                        </div>
-                        <div class="calendar-grid" id="calendarGrid">
-                            <!-- 動的に生成 -->
-                        </div>
+                <!-- 困りごとセクション -->
+                <section class="team-issues">
+                    <div class="section-header">
+                        <h2>💬 チーム困りごと</h2>
+                        <button id="addIssueBtn" class="update-btn">困りごとを投稿</button>
+                    </div>
+                    <div class="issues-list" id="teamIssuesList">
+                        <!-- 動的に生成 -->
                     </div>
                 </section>
             </div>
         </main>
     </div>
-
-    <div id="notification" class="notification"></div>
 
     <!-- 負荷状況更新モーダル -->
     <div id="workloadModal" class="modal">
@@ -181,14 +79,12 @@
                     <label for="projectCount">担当案件数（任意）</label>
                     <input type="number" id="projectCount" name="projectCount" min="0" max="20" 
                            placeholder="例: 3">
-                    <small class="form-help">現在担当している案件の数</small>
                 </div>
 
                 <div class="form-group">
                     <label for="taskCount">進行中タスク数（任意）</label>
                     <input type="number" id="taskCount" name="taskCount" min="0" max="100" 
                            placeholder="例: 15">
-                    <small class="form-help">現在進行中のタスクの数</small>
                 </div>
 
                 <div class="modal-actions">
@@ -210,20 +106,8 @@
                 <div class="form-group">
                     <label for="issueContent">困りごと・課題の内容 *</label>
                     <textarea id="issueContent" name="content" required 
-                              placeholder="困っていることや課題について詳しく教えてください。&#10;&#10;例：&#10;・新しい技術の学習で詰まっている&#10;・プロジェクトの進め方で悩んでいる&#10;・チーム内のコミュニケーションで困っている"
+                              placeholder="困っていることや課題について詳しく教えてください。"
                               rows="6"></textarea>
-                    <small class="form-help">具体的に書くことで、他のメンバーからより良いアドバイスがもらえます</small>
-                </div>
-
-                <div class="form-group">
-                    <div class="issue-tips">
-                        <h4>💡 投稿のコツ</h4>
-                        <ul>
-                            <li>何に困っているかを具体的に書く</li>
-                            <li>どんな解決策を試したかを書く</li>
-                            <li>どんなアドバイスが欲しいかを書く</li>
-                        </ul>
-                    </div>
                 </div>
 
                 <div class="modal-actions">
@@ -234,17 +118,264 @@
         </div>
     </div>
 
-    <!-- API Client and Data Manager -->
-    <script src="js/api-client.js"></script>
-    <script src="js/data-manager.js"></script>
-    <!-- Amplify JavaScript SDK -->
-    <script src="https://unpkg.com/aws-amplify@5.3.0/dist/aws-amplify.min.js"></script>
-    
-    <!-- アプリケーションスクリプト -->
-    <script type="module" src="js/aws-config.js"></script>
-    <script type="module" src="js/auth-manager.js"></script>
-    <script type="module" src="js/api-client.js"></script>
-    <script type="module" src="js/data-manager.js"></script>
-    <script type="module" src="js/app.js"></script>
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // AWS環境用のAPI設定
+        let API_BASE_URL = 'http://localhost:8081/api'; // デフォルト（ローカル開発用）
+        
+        // AWS環境の場合はAPI Gateway URLを使用
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            // 本番環境では環境変数またはビルド時に設定されるAPI URLを使用
+            API_BASE_URL = window.AWS_API_URL || 'https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev';
+        }
+
+        console.log('API Base URL:', API_BASE_URL);
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('AWS対応ダッシュボード初期化開始');
+            
+            // ボタンイベントリスナー
+            document.getElementById('updateWorkloadBtn').addEventListener('click', openWorkloadModal);
+            document.getElementById('addIssueBtn').addEventListener('click', openIssueModal);
+            
+            // モーダル関連
+            initializeModals();
+            
+            // データ読み込み
+            loadDashboardData();
+            
+            console.log('AWS対応ダッシュボード初期化完了');
+        });
+
+        // ダッシュボードデータ読み込み
+        async function loadDashboardData() {
+            await Promise.all([
+                loadWorkloadStatus(),
+                loadTeamIssues()
+            ]);
+        }
+
+        // 負荷状況読み込み
+        async function loadWorkloadStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/workload-status`);
+                const data = await response.json();
+                displayWorkloadStatus(data);
+            } catch (error) {
+                console.error('負荷状況読み込みエラー:', error);
+                document.getElementById('workloadStatusCards').innerHTML = 
+                    '<div class="error">負荷状況の読み込みに失敗しました</div>';
+            }
+        }
+
+        // 困りごと読み込み
+        async function loadTeamIssues() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/team-issues`);
+                const data = await response.json();
+                displayTeamIssues(data);
+            } catch (error) {
+                console.error('困りごと読み込みエラー:', error);
+                document.getElementById('teamIssuesList').innerHTML = 
+                    '<div class="error">困りごとの読み込みに失敗しました</div>';
+            }
+        }
+
+        // 負荷状況表示
+        function displayWorkloadStatus(statuses) {
+            const container = document.getElementById('workloadStatusCards');
+            container.innerHTML = '';
+
+            statuses.forEach(status => {
+                const card = document.createElement('div');
+                card.className = `workload-card level-${status.workloadLevel}`;
+                card.innerHTML = `
+                    <div class="user-name">${status.displayName}</div>
+                    <div class="workload-level">
+                        <span class="workload-level-badge ${status.workloadLevel}">
+                            ${getWorkloadLevelText(status.workloadLevel)}
+                        </span>
+                        <span>${getWorkloadLevelEmoji(status.workloadLevel)}</span>
+                    </div>
+                    <div class="workload-details">
+                        ${status.projectCount ? `<div>📁 ${status.projectCount}案件</div>` : ''}
+                        ${status.taskCount ? `<div>📋 ${status.taskCount}タスク</div>` : ''}
+                    </div>
+                    <div class="last-updated">最終更新: ${formatDateTime(status.updatedAt)}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 困りごと表示
+        function displayTeamIssues(issues) {
+            const container = document.getElementById('teamIssuesList');
+            container.innerHTML = '';
+
+            issues.forEach(issue => {
+                const item = document.createElement('div');
+                item.className = `issue-item ${issue.status.toLowerCase()}`;
+                item.innerHTML = `
+                    <div class="issue-header">
+                        <div class="issue-author">
+                            <span class="name">${issue.displayName}</span>
+                            <span class="date">${formatDateTime(issue.createdAt)}</span>
+                        </div>
+                        <div class="issue-status">
+                            <span class="status-badge ${issue.status}">
+                                ${issue.status === 'OPEN' ? '未解決' : '解決済み'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="issue-content">${issue.content}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // モーダル初期化
+        function initializeModals() {
+            // 負荷状況モーダル
+            const workloadModal = document.getElementById('workloadModal');
+            const workloadForm = document.getElementById('workloadForm');
+            
+            document.getElementById('workloadModalClose').addEventListener('click', () => {
+                workloadModal.classList.remove('show');
+            });
+            
+            document.getElementById('workloadCancelBtn').addEventListener('click', () => {
+                workloadModal.classList.remove('show');
+            });
+            
+            workloadForm.addEventListener('submit', handleWorkloadSubmit);
+
+            // 困りごとモーダル
+            const issueModal = document.getElementById('issueModal');
+            const issueForm = document.getElementById('issueForm');
+            
+            document.getElementById('issueModalClose').addEventListener('click', () => {
+                issueModal.classList.remove('show');
+            });
+            
+            document.getElementById('issueCancelBtn').addEventListener('click', () => {
+                issueModal.classList.remove('show');
+            });
+            
+            issueForm.addEventListener('submit', handleIssueSubmit);
+        }
+
+        // モーダル開く
+        function openWorkloadModal() {
+            console.log('負荷状況モーダルを開きます');
+            document.getElementById('workloadModal').classList.add('show');
+        }
+
+        function openIssueModal() {
+            console.log('困りごとモーダルを開きます');
+            document.getElementById('issueModal').classList.add('show');
+        }
+
+        // フォーム送信処理
+        async function handleWorkloadSubmit(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = {
+                workloadLevel: formData.get('workloadLevel')
+            };
+            
+            if (formData.get('projectCount')) {
+                data.projectCount = parseInt(formData.get('projectCount'));
+            }
+            
+            if (formData.get('taskCount')) {
+                data.taskCount = parseInt(formData.get('taskCount'));
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/workload-status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showNotification('負荷状況を更新しました', 'success');
+                    document.getElementById('workloadModal').classList.remove('show');
+                    event.target.reset();
+                    loadWorkloadStatus();
+                } else {
+                    throw new Error('更新に失敗しました');
+                }
+            } catch (error) {
+                console.error('負荷状況更新エラー:', error);
+                showNotification('更新に失敗しました', 'error');
+            }
+        }
+
+        async function handleIssueSubmit(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = {
+                content: formData.get('content')
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/team-issues`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showNotification('困りごとを投稿しました', 'success');
+                    document.getElementById('issueModal').classList.remove('show');
+                    event.target.reset();
+                    loadTeamIssues();
+                } else {
+                    throw new Error('投稿に失敗しました');
+                }
+            } catch (error) {
+                console.error('困りごと投稿エラー:', error);
+                showNotification('投稿に失敗しました', 'error');
+            }
+        }
+
+        // ユーティリティ関数
+        function getWorkloadLevelText(level) {
+            const texts = { 'LOW': '低', 'MEDIUM': '中', 'HIGH': '高' };
+            return texts[level] || '未設定';
+        }
+
+        function getWorkloadLevelEmoji(level) {
+            const emojis = { 'LOW': '😊', 'MEDIUM': '😐', 'HIGH': '😰' };
+            return emojis[level] || '❓';
+        }
+
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / (1000 * 60));
+            
+            if (diffMins < 1) return 'たった今';
+            if (diffMins < 60) return `${diffMins}分前`;
+            if (diffMins < 1440) return `${Math.floor(diffMins / 60)}時間前`;
+            return date.toLocaleDateString('ja-JP');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

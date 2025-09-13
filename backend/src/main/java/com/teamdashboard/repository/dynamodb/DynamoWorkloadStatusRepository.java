@@ -125,6 +125,7 @@ public class DynamoWorkloadStatusRepository {
         item.setItemType("WORKLOAD");
         
         // WorkloadStatusをMapに変換
+        @SuppressWarnings("unchecked")
         Map<String, Object> data = objectMapper.convertValue(workloadStatus, Map.class);
         item.setData(data);
         

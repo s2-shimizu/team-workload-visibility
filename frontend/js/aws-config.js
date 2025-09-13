@@ -1,5 +1,5 @@
 // AWS Amplify設定
-import { Amplify } from 'aws-amplify';
+// import { Amplify } from 'aws-amplify'; // CDN版を使用するためコメントアウト
 
 const awsConfig = {
     Auth: {
@@ -12,7 +12,7 @@ const awsConfig = {
         endpoints: [
             {
                 name: "teamDashboardApi",
-                endpoint: "https://xxxxxxxxxx.execute-api.ap-northeast-1.amazonaws.com/prod", // Amplify add apiで生成される
+                endpoint: "https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev",
                 region: 'ap-northeast-1'
             }
         ]
@@ -27,8 +27,14 @@ const awsConfig = {
 
 // 開発環境用の設定
 if (window.location.hostname === 'localhost') {
-    awsConfig.API.endpoints[0].endpoint = 'http://localhost:8080';
+    awsConfig.API.endpoints[0].endpoint = 'http://localhost:8081';
 }
 
-Amplify.configure(awsConfig);
-export default awsConfig;
+// CDN版のAmplifyを使用
+if (typeof window.aws_amplify_core !== 'undefined') {
+    window.aws_amplify_core.Amplify.configure(awsConfig);
+} else if (typeof Amplify !== 'undefined') {
+    Amplify.configure(awsConfig);
+}
+// export default awsConfig; // 通常のスクリプトとして読み込むためコメントアウト
+window.awsConfig = awsConfig;

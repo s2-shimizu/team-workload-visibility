@@ -19,16 +19,16 @@ import java.util.stream.Collectors;
 /**
  * 負荷状況管理のREST APIコントローラー
  */
-@RestController
-@RequestMapping("/api/workload-status")
-@CrossOrigin(origins = "*")
-@Profile("!dynamodb")
-public class WorkloadStatusController {
+// @RestController
+// @RequestMapping("/api/workload-status")
+// @CrossOrigin(origins = "*")
+// @Profile("!dynamodb")
+class WorkloadStatusController_Disabled {
 
     private final WorkloadStatusService workloadStatusService;
 
-    @Autowired
-    public WorkloadStatusController(WorkloadStatusService workloadStatusService) {
+    // @Autowired
+    public WorkloadStatusController_Disabled(WorkloadStatusService workloadStatusService) {
         this.workloadStatusService = workloadStatusService;
     }
 

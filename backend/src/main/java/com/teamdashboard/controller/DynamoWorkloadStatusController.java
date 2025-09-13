@@ -26,31 +26,44 @@ public class DynamoWorkloadStatusController {
             List<WorkloadStatusModel> statuses = workloadStatusService.getAllWorkloadStatuses();
             return ResponseEntity.ok(statuses);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(500)
+                .body(null);
         }
     }
     
     @GetMapping("/my")
-    public ResponseEntity<WorkloadStatusModel> getMyWorkloadStatus(@RequestParam String userId) {
+    public ResponseEntity<WorkloadStatusModel> getMyWorkloadStatus(@RequestParam(required = false) String userId) {
         try {
-            WorkloadStatusModel status = workloadStatusService.getWorkloadStatusByUserId(userId);
+            // デフォルトユーザーIDを設定（認証機能がない場合）
+            String targetUserId = userId != null ? userId : "current-user";
+            WorkloadStatusModel status = workloadStatusService.getWorkloadStatusByUserId(targetUserId);
             if (status != null) {
                 return ResponseEntity.ok(status);
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(500).build();
         }
     }
     
     @PostMapping
     public ResponseEntity<WorkloadStatusModel> updateWorkloadStatus(@Valid @RequestBody WorkloadStatusModel request) {
         try {
+            // デフォルトユーザーIDを設定（認証機能がない場合）
+            if (request.getUserId() == null || request.getUserId().trim().isEmpty()) {
+                request.setUserId("current-user");
+            }
+            if (request.getDisplayName() == null || request.getDisplayName().trim().isEmpty()) {
+                request.setDisplayName("現在のユーザー");
+            }
+            
             WorkloadStatusModel updated = workloadStatusService.updateWorkloadStatus(request);
             return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(500).build();
         }
     }
     
@@ -97,7 +110,52 @@ public class DynamoWorkloadStatusController {
             );
             return ResponseEntity.ok(statistics);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(500).build();
+        }
+    }
+    
+    /**
+     * エラーハンドリング用の例外ハンドラー
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+        ErrorResponse error = new ErrorResponse("VALIDATION_ERROR", e.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e) {
+        ErrorResponse error = new ErrorResponse("RUNTIME_ERROR", e.getMessage());
+        return ResponseEntity.status(500).body(error);
+    }
+
+    /**
+     * エラーレスポンス用のクラス
+     */
+    public static class ErrorResponse {
+        private String error;
+        private String message;
+
+        public ErrorResponse(String error, String message) {
+            this.error = error;
+            this.message = message;
+        }
+
+        // Getters and Setters
+        public String getError() {
+            return error;
+        }
+
+        public void setError(String error) {
+            this.error = error;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
         }
     }
 }

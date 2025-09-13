@@ -24,17 +24,17 @@ import org.springframework.context.annotation.Profile;
 /**
  * 困りごと共有機能のREST APIコントローラー
  */
-@RestController
-@RequestMapping("/api/team-issues")
-@CrossOrigin(origins = "*")
-@Profile("!dynamodb")
-public class TeamIssueController {
+// @RestController
+// @RequestMapping("/api/team-issues")
+// @CrossOrigin(origins = "*")
+// @Profile("!dynamodb")
+class TeamIssueController_Disabled {
 
     private final TeamIssueService teamIssueService;
     private final UserRepository userRepository;
 
-    @Autowired
-    public TeamIssueController(TeamIssueService teamIssueService, UserRepository userRepository) {
+    // @Autowired
+    public TeamIssueController_Disabled(TeamIssueService teamIssueService, UserRepository userRepository) {
         this.teamIssueService = teamIssueService;
         this.userRepository = userRepository;
     }

@@ -25,11 +25,41 @@ public class DynamoWorkloadStatusService {
     }
     
     public WorkloadStatusModel updateWorkloadStatus(WorkloadStatusModel workloadStatus) {
+        // バリデーション
+        if (workloadStatus == null) {
+            throw new IllegalArgumentException("WorkloadStatus cannot be null");
+        }
+        if (workloadStatus.getUserId() == null || workloadStatus.getUserId().trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID is required");
+        }
+        if (workloadStatus.getWorkloadLevel() == null) {
+            throw new IllegalArgumentException("Workload level is required");
+        }
+        
+        // プロジェクト数とタスク数の妥当性チェック
+        if (workloadStatus.getProjectCount() != null && workloadStatus.getProjectCount() < 0) {
+            throw new IllegalArgumentException("Project count cannot be negative");
+        }
+        if (workloadStatus.getTaskCount() != null && workloadStatus.getTaskCount() < 0) {
+            throw new IllegalArgumentException("Task count cannot be negative");
+        }
+        
         workloadStatus.setUpdatedAt(LocalDateTime.now());
         return repository.save(workloadStatus);
     }
     
     public WorkloadStatusModel createWorkloadStatus(String userId, String displayName, WorkloadLevel level) {
+        // バリデーション
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID is required");
+        }
+        if (displayName == null || displayName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Display name is required");
+        }
+        if (level == null) {
+            throw new IllegalArgumentException("Workload level is required");
+        }
+        
         WorkloadStatusModel workloadStatus = new WorkloadStatusModel(userId, displayName, level);
         return repository.save(workloadStatus);
     }

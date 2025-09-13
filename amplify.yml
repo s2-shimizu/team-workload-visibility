@@ -4,17 +4,21 @@ frontend:
     preBuild:
       commands:
         - echo "Preparing static frontend files"
-        - ls -la
         - ls -la frontend
     build:
       commands:
         - echo "Building frontend application"
-        - cd frontend
-        - npm run build
+        - cp frontend/aws-index.html frontend/index.html
+        - echo "Frontend build completed"
   artifacts:
-    baseDirectory: frontend/build
+    baseDirectory: frontend
     files:
       - '**/*'
+      - '!aws-index.html'
+      - '!js/auth-manager.js'
+      - '!js/aws-config.js'
+      - '!js/api-client.js'
+      - '!js/data-manager.js'
+      - '!js/app.js'
   cache:
-    paths:
-      - frontend/node_modules/**/*
+    paths: []

@@ -5,7 +5,7 @@ echo ========================================
 
 echo.
 echo バックエンドが起動していることを確認してください
-echo バックエンドURL: http://localhost:8080
+echo バックエンドURL: http://localhost:8081
 echo.
 
 echo フロントエンドをブラウザで開きます...

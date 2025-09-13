@@ -12,6 +12,7 @@ import com.teamdashboard.service.TeamIssueService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,9 +32,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * TeamIssueControllerの単体テスト
  */
-@WebMvcTest(controllers = TeamIssueController.class,
+@WebMvcTest(controllers = TeamIssueController_Disabled.class,
            excludeAutoConfiguration = {org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class})
 @DisplayName("TeamIssueController テスト")
+@Disabled("Controller is disabled - using DynamoDB version instead")
 class TeamIssueControllerTest {
 
     @Autowired

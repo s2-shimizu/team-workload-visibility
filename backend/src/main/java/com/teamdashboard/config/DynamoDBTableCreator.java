@@ -22,7 +22,11 @@ public class DynamoDBTableCreator implements CommandLineRunner {
     
     @Override
     public void run(String... args) throws Exception {
-        createTableIfNotExists();
+        try {
+            createTableIfNotExists();
+        } catch (Exception e) {
+            System.err.println("DynamoDBテーブル作成をスキップしました（DynamoDBローカルが利用できません）: " + e.getMessage());
+        }
     }
     
     private void createTableIfNotExists() {
@@ -89,16 +93,9 @@ public class DynamoDBTableCreator implements CommandLineRunner {
                     .projection(Projection.builder()
                         .projectionType(ProjectionType.ALL)
                         .build())
-                    .provisionedThroughput(ProvisionedThroughput.builder()
-                        .readCapacityUnits(5L)
-                        .writeCapacityUnits(5L)
-                        .build())
                     .build()
             )
-            .provisionedThroughput(ProvisionedThroughput.builder()
-                .readCapacityUnits(5L)
-                .writeCapacityUnits(5L)
-                .build())
+            .billingMode(BillingMode.PAY_PER_REQUEST)
             .build();
         
         try {

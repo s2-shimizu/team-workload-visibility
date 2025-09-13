@@ -1,63 +1,64 @@
-# Build outputs
-target/
-build/
-dist/
-*.jar
-!mvnw.jar
-
-# Dependencies
-node_modules/
-.npm/
+# Build artifacts
+backend/target/
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+.aws-sam/
+samconfig.toml
 
 # IDE files
-.vscode/
 .idea/
+.vscode/
 *.iml
-.project
-.classpath
-.settings/
+*.ipr
+*.iws
 
 # OS files
 .DS_Store
 Thumbs.db
+*.log
+
+# Temporary files
 *.tmp
 *.temp
+*.bak
+*.swp
+*~
 
-# Logs
-*.log
-logs/
+# Node.js (if using)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Environment files
-.env
-.env.local
-.env.production
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-
-# DynamoDB Local
-dynamodb-local/
-shared-local-instance.db
-
-# AWS files
+# AWS credentials
 .aws/
 aws-exports.js
 
-# Test files
-coverage/
-*.coverage
-test-results/
+# Local development files
+frontend-server.js
+start-frontend-server.ps1
+start-frontend-server.bat
+start-powershell-server.ps1
 
-# Temporary files
-*.swp
-*.swo
-*~
+# Test files (keep in repo but exclude from deployment)
+frontend/test-*.html
+frontend/integration-test.html
+test-*.html
+test-*.js
+test-*.bat
 
-# Extensions
-extensions/
+# Duplicate/backup files
+frontend/simple-dashboard.html
+frontend/index-original.html
 
-# Kiro specific
-argv.json
-.kiro/settings/
+# Local server scripts
+start-test-server-8082.bat
+start-backend.bat
+
+# Documentation drafts (keep main docs)
+MIGRATION_GUIDE.md
+AMPLIFY_TROUBLESHOOTING.md
+BACKEND_DEPLOYMENT_GUIDE.md
+AMPLIFY_DEPLOYMENT_GUIDE.md
+FRONTEND_SETUP.md

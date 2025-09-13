@@ -27,6 +27,20 @@ public class DynamoTeamIssueService {
     }
     
     public TeamIssueModel createTeamIssue(String userId, String displayName, String content) {
+        // バリデーション
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID is required");
+        }
+        if (displayName == null || displayName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Display name is required");
+        }
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("Content is required");
+        }
+        if (content.length() > 1000) {
+            throw new IllegalArgumentException("Content must be 1000 characters or less");
+        }
+        
         TeamIssueModel teamIssue = new TeamIssueModel(userId, displayName, content);
         return repository.save(teamIssue);
     }
@@ -52,9 +66,17 @@ public class DynamoTeamIssueService {
     }
     
     public TeamIssueModel resolveIssue(String issueId) {
+        // バリデーション
+        if (issueId == null || issueId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Issue ID is required");
+        }
+        
         Optional<TeamIssueModel> optionalIssue = repository.findById(issueId);
         if (optionalIssue.isPresent()) {
             TeamIssueModel issue = optionalIssue.get();
+            if (issue.getStatus() == IssueStatus.RESOLVED) {
+                throw new IllegalStateException("Issue is already resolved");
+            }
             issue.resolve();
             return repository.save(issue);
         }
@@ -62,6 +84,23 @@ public class DynamoTeamIssueService {
     }
     
     public TeamIssueModel addComment(String issueId, String userId, String displayName, String content) {
+        // バリデーション
+        if (issueId == null || issueId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Issue ID is required");
+        }
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID is required");
+        }
+        if (displayName == null || displayName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Display name is required");
+        }
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("Comment content is required");
+        }
+        if (content.length() > 500) {
+            throw new IllegalArgumentException("Comment must be 500 characters or less");
+        }
+        
         Optional<TeamIssueModel> optionalIssue = repository.findById(issueId);
         if (optionalIssue.isPresent()) {
             TeamIssueModel issue = optionalIssue.get();

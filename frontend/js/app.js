@@ -1,33 +1,74 @@
 // API設定
-const API_BASE_URL = 'http://localhost:8081/api';  // ポート番号を合わせる
+const API_BASE_URL = 'http://localhost:8081/api';  // ポート8081を使用
 
-// DOM要素
-const tabButtons = document.querySelectorAll('.nav-btn');
-const tabContents = document.querySelectorAll('.tab-content');
-const reportForm = document.getElementById('reportForm');
-const dateFilter = document.getElementById('dateFilter');
+// DOM要素（DOMContentLoaded後に取得）
+let tabButtons, tabContents, reportForm, dateFilter;
+
+// DOM要素を安全に取得する関数
+function initializeDOM() {
+    tabButtons = document.querySelectorAll('.nav-btn');
+    tabContents = document.querySelectorAll('.tab-content');
+    reportForm = document.getElementById('reportForm');
+    dateFilter = document.getElementById('dateFilter');
+    
+    console.log('DOM要素を取得しました:', {
+        tabButtons: tabButtons.length,
+        tabContents: tabContents.length,
+        reportForm: !!reportForm,
+        dateFilter: !!dateFilter
+    });
+}
 
 // 初期化
 document.addEventListener('DOMContentLoaded', function() {
-    initializeTabs();
-    initializeCalendar();
-    loadDashboard();
+    console.log('DOM読み込み完了 - アプリケーション初期化開始');
     
-    // イベントリスナー
-    reportForm.addEventListener('submit', handleReportSubmit);
-    dateFilter.addEventListener('change', loadRecentReports);
-    
-    // 負荷状況更新ボタン
-    const updateWorkloadBtn = document.getElementById('updateWorkloadBtn');
-    if (updateWorkloadBtn) {
-        updateWorkloadBtn.addEventListener('click', openWorkloadModal);
+    try {
+        // DOM要素を初期化
+        initializeDOM();
+        
+        initializeTabs();
+        initializeCalendar();
+        loadDashboard();
+        
+        // イベントリスナー
+        if (reportForm) {
+            reportForm.addEventListener('submit', handleReportSubmit);
+        }
+        
+        if (dateFilter) {
+            dateFilter.addEventListener('change', loadRecentReports);
+        }
+        
+        // 負荷状況更新ボタン
+        const updateWorkloadBtn = document.getElementById('updateWorkloadBtn');
+        if (updateWorkloadBtn) {
+            updateWorkloadBtn.addEventListener('click', openWorkloadModal);
+            console.log('負荷状況更新ボタンのイベントリスナーを設定しました');
+        } else {
+            console.warn('負荷状況更新ボタンが見つかりません');
+        }
+        
+        // 負荷状況モーダル関連
+        initializeWorkloadModal();
+        
+        // 困りごと関連
+        initializeTeamIssues();
+        
+        // DataManagerを完全に無効化
+        if (typeof window.dataManager !== 'undefined') {
+            console.log('DataManagerを完全に無効化します');
+            // 自動更新を停止
+            window.dataManager.stopAutoRefresh('workloadStatuses');
+            window.dataManager.stopAutoRefresh('teamIssues');
+            // DataManagerのイベントリスナーも無効化
+            window.dataManager.destroy();
+        }
+        
+        console.log('アプリケーション初期化完了');
+    } catch (error) {
+        console.error('アプリケーション初期化エラー:', error);
     }
-    
-    // 負荷状況モーダル関連
-    initializeWorkloadModal();
-    
-    // 困りごと関連
-    initializeTeamIssues();
 });
 
 // タブ機能
@@ -59,22 +100,154 @@ function switchTab(tabId) {
 
 // ダッシュボード読み込み
 async function loadDashboard() {
-    await Promise.all([
-        loadWorkloadStatus(),
-        loadTeamIssues(),
-        loadTeamStatus(),
-        loadRecentReports()
-    ]);
+    console.log('ダッシュボードデータの読み込みを開始します');
+    
+    try {
+        // サーバー接続テスト
+        const isServerAvailable = await testServerConnection();
+        if (!isServerAvailable) {
+            console.warn('サーバーに接続できません。オフラインモードで動作します。');
+            showOfflineMessage();
+            return;
+        }
+        
+        console.log('サーバー接続確認済み。データを読み込みます。');
+        
+        await Promise.all([
+            loadWorkloadStatus(),
+            loadTeamIssues(),
+            loadTeamStatus(),
+            loadRecentReports()
+        ]);
+        
+        console.log('ダッシュボードデータの読み込み完了');
+    } catch (error) {
+        console.error('ダッシュボード読み込みエラー:', error);
+        showOfflineMessage();
+    }
 }
 
-// 負荷状況読み込み（新しいAPIクライアントを使用）
+// サーバー接続テスト
+async function testServerConnection() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/status`, {
+            method: 'GET',
+            timeout: 5000
+        });
+        return response.ok;
+    } catch (error) {
+        console.error('サーバー接続テストエラー:', error);
+        return false;
+    }
+}
+
+// オフラインメッセージを表示
+function showOfflineMessage() {
+    const workloadCards = document.getElementById('workloadStatusCards');
+    const issuesList = document.getElementById('teamIssuesList');
+    
+    const offlineMessage = `
+        <div class="offline-message">
+            <h3>🔌 サーバーに接続できません</h3>
+            <p>バックエンドサーバーが起動していない可能性があります。</p>
+            <div class="offline-actions">
+                <button onclick="retryConnection()" class="retry-btn">再接続を試す</button>
+                <button onclick="showServerInstructions()" class="help-btn">サーバー起動方法</button>
+            </div>
+        </div>
+    `;
+    
+    if (workloadCards) {
+        workloadCards.innerHTML = offlineMessage;
+    }
+    
+    if (issuesList) {
+        issuesList.innerHTML = offlineMessage;
+    }
+}
+
+// 再接続を試す
+async function retryConnection() {
+    console.log('再接続を試行します...');
+    showNotification('サーバーへの接続を確認中...', 'info');
+    
+    const isAvailable = await testServerConnection();
+    if (isAvailable) {
+        showNotification('サーバーに接続しました！', 'success');
+        loadDashboard();
+    } else {
+        showNotification('サーバーに接続できませんでした', 'error');
+    }
+}
+
+// サーバー起動方法を表示
+function showServerInstructions() {
+    const instructions = `
+サーバーを起動するには以下のコマンドを実行してください：
+
+1. Node.jsテストサーバー:
+   start-simple-test-server.bat
+
+2. Spring Bootサーバー:
+   start-backend-minimal.bat
+
+3. PowerShellサーバー:
+   start-powershell-server.bat
+    `;
+    
+    alert(instructions);
+}
+
+// 負荷状況読み込み（直接API呼び出し）
 async function loadWorkloadStatus() {
     try {
-        await dataManager.refreshWorkloadStatuses();
+        console.log('負荷状況を直接APIから取得します');
+        const response = await fetch(`${API_BASE_URL}/workload-status`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const workloadStatuses = await response.json();
+        console.log('負荷状況取得成功:', workloadStatuses);
+        
+        updateWorkloadStatusUI(workloadStatuses);
     } catch (error) {
         console.error('負荷状況の読み込みに失敗:', error);
-        // エラーハンドリングはdataManagerで行われる
+        showWorkloadStatusError(error);
     }
+}
+
+// 負荷状況UIを更新
+function updateWorkloadStatusUI(workloadStatuses) {
+    const container = document.getElementById('workloadStatusCards');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (workloadStatuses.length === 0) {
+        container.innerHTML = '<div class="workload-empty">まだ負荷状況が登録されていません</div>';
+        return;
+    }
+
+    workloadStatuses.forEach(status => {
+        const card = createWorkloadCard(status);
+        container.appendChild(card);
+    });
+}
+
+// 負荷状況エラー表示
+function showWorkloadStatusError(error) {
+    const container = document.getElementById('workloadStatusCards');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div class="offline-message">
+            <h3>⚠️ 負荷状況の読み込みに失敗</h3>
+            <p>エラー: ${error.message}</p>
+            <button onclick="loadWorkloadStatus()" class="retry-btn">再試行</button>
+        </div>
+    `;
 }
 
 // 負荷状況カード作成
@@ -647,11 +820,39 @@ let allIssues = [];
 
 async function loadTeamIssues() {
     try {
-        await dataManager.refreshTeamIssues();
+        console.log('困りごとを直接APIから取得します');
+        const response = await fetch(`${API_BASE_URL}/team-issues`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const teamIssues = await response.json();
+        console.log('困りごと取得成功:', teamIssues);
+        
+        // グローバル変数を更新
+        window.allIssues = teamIssues;
+        
+        // UIを更新
+        displayFilteredIssues();
     } catch (error) {
         console.error('困りごとの読み込みに失敗:', error);
-        // エラーハンドリングはdataManagerで行われる
+        showTeamIssuesError(error);
     }
+}
+
+// 困りごとエラー表示
+function showTeamIssuesError(error) {
+    const container = document.getElementById('teamIssuesList');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div class="offline-message">
+            <h3>⚠️ 困りごとの読み込みに失敗</h3>
+            <p>エラー: ${error.message}</p>
+            <button onclick="loadTeamIssues()" class="retry-btn">再試行</button>
+        </div>
+    `;
 }
 
 function displayFilteredIssues() {

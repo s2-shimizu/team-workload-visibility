@@ -3,10 +3,10 @@
  * 負荷状況と困りごと管理のためのAPIクライアント
  */
 
-// Amplify設定を読み込み
-import './aws-config.js';
-import { API } from 'aws-amplify';
-import { authManager } from './auth-manager.js';
+// Amplify設定を読み込み（CDN版を使用）
+// import './aws-config.js';
+// import { API } from 'aws-amplify';
+// import { authManager } from './auth-manager.js';
 
 class APIClient {
     constructor() {
@@ -22,14 +22,20 @@ class APIClient {
      * 認証トークンを取得（Amplify対応）
      */
     async getAuthToken() {
-        return await authManager.getAuthToken();
+        if (typeof window.authManager !== 'undefined') {
+            return await window.authManager.getAuthToken();
+        }
+        return null;
     }
 
     /**
      * 現在のユーザーを取得
      */
     async getCurrentUser() {
-        return await authManager.getCurrentUser();
+        if (typeof window.authManager !== 'undefined') {
+            return await window.authManager.getCurrentUser();
+        }
+        return null;
     }
 
     /**
@@ -134,6 +140,11 @@ class APIClient {
 
             // Amplify API Gateway経由
             const body = data;
+            const API = window.aws_amplify_api ? window.aws_amplify_api.API : (window.API || null);
+            
+            if (!API) {
+                throw new Error('Amplify API not available');
+            }
 
             switch (method.toUpperCase()) {
                 case 'GET':

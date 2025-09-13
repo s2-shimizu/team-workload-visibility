@@ -45,14 +45,16 @@ public class DynamoTeamIssueController {
     @PostMapping
     public ResponseEntity<TeamIssueModel> createTeamIssue(@Valid @RequestBody CreateIssueRequest request) {
         try {
-            TeamIssueModel created = teamIssueService.createTeamIssue(
-                request.getUserId(), 
-                request.getDisplayName(), 
-                request.getContent()
-            );
+            // デフォルトユーザー情報を設定（認証機能がない場合）
+            String userId = request.getUserId() != null ? request.getUserId() : "current-user";
+            String displayName = request.getDisplayName() != null ? request.getDisplayName() : "現在のユーザー";
+            
+            TeamIssueModel created = teamIssueService.createTeamIssue(userId, displayName, request.getContent());
             return ResponseEntity.ok(created);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(500).build();
         }
     }
     
@@ -73,17 +75,16 @@ public class DynamoTeamIssueController {
             @PathVariable String issueId, 
             @Valid @RequestBody AddCommentRequest request) {
         try {
-            TeamIssueModel updated = teamIssueService.addComment(
-                issueId, 
-                request.getUserId(), 
-                request.getDisplayName(), 
-                request.getContent()
-            );
+            // デフォルトユーザー情報を設定（認証機能がない場合）
+            String userId = request.getUserId() != null ? request.getUserId() : "current-user";
+            String displayName = request.getDisplayName() != null ? request.getDisplayName() : "現在のユーザー";
+            
+            TeamIssueModel updated = teamIssueService.addComment(issueId, userId, displayName, request.getContent());
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(500).build();
         }
     }
     
@@ -172,5 +173,50 @@ public class DynamoTeamIssueController {
         
         public String getContent() { return content; }
         public void setContent(String content) { this.content = content; }
+    }
+    
+    /**
+     * エラーハンドリング用の例外ハンドラー
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+        ErrorResponse error = new ErrorResponse("VALIDATION_ERROR", e.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e) {
+        ErrorResponse error = new ErrorResponse("RUNTIME_ERROR", e.getMessage());
+        return ResponseEntity.status(500).body(error);
+    }
+
+    /**
+     * エラーレスポンス用のクラス
+     */
+    public static class ErrorResponse {
+        private String error;
+        private String message;
+
+        public ErrorResponse(String error, String message) {
+            this.error = error;
+            this.message = message;
+        }
+
+        // Getters and Setters
+        public String getError() {
+            return error;
+        }
+
+        public void setError(String error) {
+            this.error = error;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 }

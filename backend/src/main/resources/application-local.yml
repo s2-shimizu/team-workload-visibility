@@ -1,6 +1,9 @@
 spring:
+  profiles:
+    active: local
+  
   application:
-    name: team-dashboard
+    name: team-dashboard-local
   
   datasource:
     url: jdbc:h2:mem:team_dashboard
@@ -35,8 +38,10 @@ spring:
 
 server:
   port: 8081
-  address: 0.0.0.0  # 全てのネットワークインターフェースでリッスン
+  address: 0.0.0.0
 
 logging:
   level:
     com.teamdashboard: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.boot.web: DEBUG
