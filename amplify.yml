@@ -40,6 +40,12 @@ backend:
     preBuild:
       commands:
         - echo "Preparing backend build environment"
+        - echo "Setting up Java environment"
+        - curl -s "https://get.sdkman.io" | bash
+        - source "$HOME/.sdkman/bin/sdkman-init.sh"
+        - sdk install java 17.0.12-amzn
+        - sdk use java 17.0.12-amzn
+        - echo "Java setup completed"
         - cd backend && echo "Checking Java version"
         - java -version
         - echo "Checking Maven installation"
@@ -51,6 +57,7 @@ backend:
     build:
       commands:
         - echo "Building Java Spring Boot application for Lambda"
+        - source "$HOME/.sdkman/bin/sdkman-init.sh"
         - cd backend && echo "Cleaning previous builds"
         - mvn clean
         - echo "Compiling and packaging application"
@@ -61,6 +68,7 @@ backend:
     postBuild:
       commands:
         - echo "Backend post-build validation"
+        - source "$HOME/.sdkman/bin/sdkman-init.sh"
         - cd backend && echo "Checking final JAR file"
         - 'test -f target/*.jar || (echo "Error: JAR file not created" && exit 1)'
         - 'echo "JAR file size:"'
