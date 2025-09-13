@@ -6,19 +6,19 @@ frontend:
         - echo "Preparing static frontend files"
         - ls -la frontend
         - echo "Checking frontend file structure"
-        - test -f frontend/index.html || (echo "Error: frontend/index.html not found" && exit 1)
-        - test -f frontend/css/style.css || (echo "Error: frontend/css/style.css not found" && exit 1)
+        - 'test -f frontend/index.html || (echo "Error: frontend/index.html not found" && exit 1)'
+        - 'test -f frontend/css/style.css || (echo "Error: frontend/css/style.css not found" && exit 1)'
     build:
       commands:
         - echo "Building frontend application"
         - echo "Validating JavaScript files"
-        - test -f frontend/js/app.js || (echo "Error: frontend/js/app.js not found" && exit 1)
-        - test -f frontend/js/api-client.js || (echo "Error: frontend/js/api-client.js not found" && exit 1)
+        - 'test -f frontend/js/app.js || (echo "Error: frontend/js/app.js not found" && exit 1)'
+        - 'test -f frontend/js/api-client.js || (echo "Error: frontend/js/api-client.js not found" && exit 1)'
         - echo "Frontend build completed successfully"
     postBuild:
       commands:
         - echo "Frontend post-build validation"
-        - ls -la frontend/
+        - 'ls -la frontend/'
         - echo "Verifying all required files are present"
   artifacts:
     baseDirectory: frontend
@@ -45,9 +45,9 @@ backend:
         - echo "Checking Maven installation"
         - mvn -version
         - echo "Validating pom.xml"
-        - test -f pom.xml || (echo "Error: pom.xml not found" && exit 1)
+        - 'test -f pom.xml || (echo "Error: pom.xml not found" && exit 1)'
         - echo "Checking main application class"
-        - find src/main/java -name "*.java" -type f | head -5
+        - 'find src/main/java -name "*.java" -type f | head -5'
     build:
       commands:
         - echo "Building Java Spring Boot application for Lambda"
@@ -56,15 +56,15 @@ backend:
         - echo "Compiling and packaging application"
         - mvn package -DskipTests -Dspring.profiles.active=lambda
         - echo "Verifying JAR file creation"
-        - ls -la target/*.jar
+        - 'ls -la target/*.jar'
         - echo "Backend build completed successfully"
     postBuild:
       commands:
         - echo "Backend post-build validation"
         - cd backend && echo "Checking final JAR file"
-        - test -f target/*.jar || (echo "Error: JAR file not created" && exit 1)
-        - echo "JAR file size:"
-        - du -h target/*.jar
+        - 'test -f target/*.jar || (echo "Error: JAR file not created" && exit 1)'
+        - 'echo "JAR file size:"'
+        - 'du -h target/*.jar'
   artifacts:
     baseDirectory: backend/target
     files:
