@@ -1,189 +1,189 @@
 {
-  "timestamp": "2025-09-13T10:29:03.775Z",
+  "timestamp": "2025-09-14T17:01:57.581Z",
   "success": false,
   "frontend": {
     "pageAvailability": [
       {
-        "url": "http://localhost:4334/",
+        "url": "https://doir0cli6meoa.amplifyapp.com/",
         "name": "Main page (index.html)",
         "success": false,
-        "statusCode": null,
-        "responseTime": null,
-        "contentLength": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "statusCode": 404,
+        "responseTime": 369,
+        "contentLength": "0",
+        "error": "HTTP 404"
       },
       {
-        "url": "http://localhost:4334/index.html",
+        "url": "https://doir0cli6meoa.amplifyapp.com/index.html",
         "name": "Index page direct access",
         "success": false,
-        "statusCode": null,
-        "responseTime": null,
-        "contentLength": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "statusCode": 404,
+        "responseTime": 463,
+        "contentLength": "0",
+        "error": "HTTP 404"
       }
     ],
     "staticResources": [
       {
-        "url": "http://localhost:4334/css/style.css",
+        "url": "https://doir0cli6meoa.amplifyapp.com/css/style.css",
         "path": "/css/style.css",
         "type": "CSS",
         "success": false,
-        "statusCode": null,
-        "contentType": null,
-        "contentLength": null,
-        "responseTime": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "statusCode": 404,
+        "contentType": "unknown",
+        "contentLength": "0",
+        "responseTime": 161,
+        "error": "HTTP 404"
       },
       {
-        "url": "http://localhost:4334/js/app.js",
+        "url": "https://doir0cli6meoa.amplifyapp.com/js/app.js",
         "path": "/js/app.js",
         "type": "JavaScript",
         "success": false,
-        "statusCode": null,
-        "contentType": null,
-        "contentLength": null,
-        "responseTime": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "statusCode": 404,
+        "contentType": "unknown",
+        "contentLength": "0",
+        "responseTime": 147,
+        "error": "HTTP 404"
       },
       {
-        "url": "http://localhost:4334/js/api-client.js",
+        "url": "https://doir0cli6meoa.amplifyapp.com/js/api-client.js",
         "path": "/js/api-client.js",
         "type": "JavaScript",
         "success": false,
-        "statusCode": null,
-        "contentType": null,
-        "contentLength": null,
-        "responseTime": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "statusCode": 404,
+        "contentType": "unknown",
+        "contentLength": "0",
+        "responseTime": 162,
+        "error": "HTTP 404"
       },
       {
-        "url": "http://localhost:4334/package.json",
+        "url": "https://doir0cli6meoa.amplifyapp.com/package.json",
         "path": "/package.json",
         "type": "JSON",
         "success": false,
-        "statusCode": null,
-        "contentType": null,
-        "contentLength": null,
-        "responseTime": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "statusCode": 404,
+        "contentType": "unknown",
+        "contentLength": "0",
+        "responseTime": 162,
+        "error": "HTTP 404"
       }
     ]
   },
   "api": {
     "endpoints": [
       {
-        "url": "http://localhost:4334/health",
+        "url": "https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev/health",
         "path": "/health",
         "method": "GET",
         "name": "Health check",
         "success": false,
-        "statusCode": null,
-        "responseTime": null,
-        "contentType": null,
+        "statusCode": 502,
+        "responseTime": 135,
+        "contentType": "application/json",
         "responseData": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "error": "HTTP 502"
       },
       {
-        "url": "http://localhost:4334/actuator/health",
+        "url": "https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev/actuator/health",
         "path": "/actuator/health",
         "method": "GET",
         "name": "Actuator health",
         "success": false,
-        "statusCode": null,
-        "responseTime": null,
-        "contentType": null,
+        "statusCode": 502,
+        "responseTime": 61,
+        "contentType": "application/json",
         "responseData": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "error": "HTTP 502"
       },
       {
-        "url": "http://localhost:4334/api/status",
+        "url": "https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev/api/status",
         "path": "/api/status",
         "method": "GET",
         "name": "API status",
         "success": false,
-        "statusCode": null,
-        "responseTime": null,
-        "contentType": null,
+        "statusCode": 502,
+        "responseTime": 64,
+        "contentType": "application/json",
         "responseData": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "error": "HTTP 502"
       },
       {
-        "url": "http://localhost:4334/api/workload-status",
+        "url": "https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev/api/workload-status",
         "path": "/api/workload-status",
         "method": "GET",
         "name": "Workload status list",
         "success": false,
-        "statusCode": null,
-        "responseTime": null,
-        "contentType": null,
+        "statusCode": 502,
+        "responseTime": 59,
+        "contentType": "application/json",
         "responseData": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "error": "HTTP 502"
       },
       {
-        "url": "http://localhost:4334/api/workload-status/my",
+        "url": "https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev/api/workload-status/my",
         "path": "/api/workload-status/my",
         "method": "GET",
         "name": "My workload status",
         "success": false,
-        "statusCode": null,
-        "responseTime": null,
-        "contentType": null,
+        "statusCode": 502,
+        "responseTime": 53,
+        "contentType": "application/json",
         "responseData": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "error": "HTTP 502"
       },
       {
-        "url": "http://localhost:4334/api/team-issues",
+        "url": "https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev/api/team-issues",
         "path": "/api/team-issues",
         "method": "GET",
         "name": "Team issues list",
         "success": false,
-        "statusCode": null,
-        "responseTime": null,
-        "contentType": null,
+        "statusCode": 502,
+        "responseTime": 57,
+        "contentType": "application/json",
         "responseData": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "error": "HTTP 502"
       },
       {
-        "url": "http://localhost:4334/api/team-issues/open",
+        "url": "https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev/api/team-issues/open",
         "path": "/api/team-issues/open",
         "method": "GET",
         "name": "Open team issues",
         "success": false,
-        "statusCode": null,
-        "responseTime": null,
-        "contentType": null,
+        "statusCode": 502,
+        "responseTime": 50,
+        "contentType": "application/json",
         "responseData": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "error": "HTTP 502"
       },
       {
-        "url": "http://localhost:4334/api/team-issues/statistics",
+        "url": "https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev/api/team-issues/statistics",
         "path": "/api/team-issues/statistics",
         "method": "GET",
         "name": "Issue statistics",
         "success": false,
-        "statusCode": null,
-        "responseTime": null,
-        "contentType": null,
+        "statusCode": 502,
+        "responseTime": 55,
+        "contentType": "application/json",
         "responseData": null,
-        "error": "Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+        "error": "HTTP 502"
       }
     ]
   },
   "errors": [
-    "Frontend page unavailable: Main page (index.html) - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "Frontend page unavailable: Index page direct access - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "Static resource unavailable: /css/style.css - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "Static resource unavailable: /js/app.js - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "Static resource unavailable: /js/api-client.js - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "Static resource unavailable: /package.json - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "API endpoint failed: /health - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "API endpoint failed: /actuator/health - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "API endpoint failed: /api/status - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "API endpoint failed: /api/workload-status - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "API endpoint failed: /api/workload-status/my - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "API endpoint failed: /api/team-issues - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "API endpoint failed: /api/team-issues/open - Request failed: connect ECONNREFUSED 127.0.0.1:4334",
-    "API endpoint failed: /api/team-issues/statistics - Request failed: connect ECONNREFUSED 127.0.0.1:4334"
+    "Frontend page unavailable: Main page (index.html) - HTTP 404",
+    "Frontend page unavailable: Index page direct access - HTTP 404",
+    "Static resource unavailable: /css/style.css - HTTP 404",
+    "Static resource unavailable: /js/app.js - HTTP 404",
+    "Static resource unavailable: /js/api-client.js - HTTP 404",
+    "Static resource unavailable: /package.json - HTTP 404",
+    "API endpoint failed: /health - HTTP 502",
+    "API endpoint failed: /actuator/health - HTTP 502",
+    "API endpoint failed: /api/status - HTTP 502",
+    "API endpoint failed: /api/workload-status - HTTP 502",
+    "API endpoint failed: /api/workload-status/my - HTTP 502",
+    "API endpoint failed: /api/team-issues - HTTP 502",
+    "API endpoint failed: /api/team-issues/open - HTTP 502",
+    "API endpoint failed: /api/team-issues/statistics - HTTP 502"
   ],
   "warnings": []
 }

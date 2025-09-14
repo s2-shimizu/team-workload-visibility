@@ -1234,7 +1234,7 @@ class ErrorHandler {
             });
         }
         
-        return recommendations;());
+        return recommendations;
             // This is a basic check - in a real implementation, you'd use a library like 'statvfs'
             this.log('INFO', 'SYSTEM', 'Disk space check completed');
         } catch (error) {
