@@ -1,0 +1,10 @@
+{
+  "IdentityPoolName": "team_dashboard_identity_pool",
+  "AllowUnauthenticatedIdentities": false,
+  "CognitoIdentityProviders": [
+    {
+      "ProviderName": "cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_S0zRV4ais",
+      "ClientId": "7nue9hv9e54sdrcvorl990q1t6"
+    }
+  ]
+}

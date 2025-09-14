@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-09-14T17:01:57.581Z",
+  "timestamp": "2025-09-14T17:25:08.490Z",
   "success": false,
   "frontend": {
     "pageAvailability": [
@@ -8,7 +8,7 @@
         "name": "Main page (index.html)",
         "success": false,
         "statusCode": 404,
-        "responseTime": 369,
+        "responseTime": 645,
         "contentLength": "0",
         "error": "HTTP 404"
       },
@@ -17,7 +17,7 @@
         "name": "Index page direct access",
         "success": false,
         "statusCode": 404,
-        "responseTime": 463,
+        "responseTime": 405,
         "contentLength": "0",
         "error": "HTTP 404"
       }
@@ -31,7 +31,7 @@
         "statusCode": 404,
         "contentType": "unknown",
         "contentLength": "0",
-        "responseTime": 161,
+        "responseTime": 156,
         "error": "HTTP 404"
       },
       {
@@ -42,7 +42,7 @@
         "statusCode": 404,
         "contentType": "unknown",
         "contentLength": "0",
-        "responseTime": 147,
+        "responseTime": 250,
         "error": "HTTP 404"
       },
       {
@@ -53,7 +53,7 @@
         "statusCode": 404,
         "contentType": "unknown",
         "contentLength": "0",
-        "responseTime": 162,
+        "responseTime": 155,
         "error": "HTTP 404"
       },
       {
@@ -64,7 +64,7 @@
         "statusCode": 404,
         "contentType": "unknown",
         "contentLength": "0",
-        "responseTime": 162,
+        "responseTime": 158,
         "error": "HTTP 404"
       }
     ]
@@ -78,7 +78,7 @@
         "name": "Health check",
         "success": false,
         "statusCode": 502,
-        "responseTime": 135,
+        "responseTime": 95,
         "contentType": "application/json",
         "responseData": null,
         "error": "HTTP 502"
@@ -90,7 +90,7 @@
         "name": "Actuator health",
         "success": false,
         "statusCode": 502,
-        "responseTime": 61,
+        "responseTime": 72,
         "contentType": "application/json",
         "responseData": null,
         "error": "HTTP 502"
@@ -102,7 +102,7 @@
         "name": "API status",
         "success": false,
         "statusCode": 502,
-        "responseTime": 64,
+        "responseTime": 66,
         "contentType": "application/json",
         "responseData": null,
         "error": "HTTP 502"
@@ -114,7 +114,7 @@
         "name": "Workload status list",
         "success": false,
         "statusCode": 502,
-        "responseTime": 59,
+        "responseTime": 54,
         "contentType": "application/json",
         "responseData": null,
         "error": "HTTP 502"
@@ -126,7 +126,7 @@
         "name": "My workload status",
         "success": false,
         "statusCode": 502,
-        "responseTime": 53,
+        "responseTime": 55,
         "contentType": "application/json",
         "responseData": null,
         "error": "HTTP 502"
@@ -138,7 +138,7 @@
         "name": "Team issues list",
         "success": false,
         "statusCode": 502,
-        "responseTime": 57,
+        "responseTime": 53,
         "contentType": "application/json",
         "responseData": null,
         "error": "HTTP 502"
@@ -150,7 +150,7 @@
         "name": "Open team issues",
         "success": false,
         "statusCode": 502,
-        "responseTime": 50,
+        "responseTime": 59,
         "contentType": "application/json",
         "responseData": null,
         "error": "HTTP 502"
@@ -162,7 +162,7 @@
         "name": "Issue statistics",
         "success": false,
         "statusCode": 502,
-        "responseTime": 55,
+        "responseTime": 54,
         "contentType": "application/json",
         "responseData": null,
         "error": "HTTP 502"

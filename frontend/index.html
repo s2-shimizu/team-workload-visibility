@@ -10,6 +10,10 @@
     <div class="container">
         <header class="header">
             <h1>🎯 チーム状況ダッシュボード</h1>
+            <div class="header-right">
+                <span id="userInfo" class="user-info"></span>
+                <button id="logoutBtn" class="logout-btn">ログアウト</button>
+            </div>
             <nav class="nav">
                 <button class="nav-btn active" data-tab="dashboard">ダッシュボード</button>
                 <button class="nav-btn" data-tab="report">日報投稿</button>
@@ -120,6 +124,14 @@
 
     <div id="notification" class="notification"></div>
 
+    <!-- AWS Amplify CDN -->
+    <script src="https://unpkg.com/@aws-amplify/core@5.8.5/dist/aws-amplify-core.min.js"></script>
+    <script src="https://unpkg.com/@aws-amplify/auth@5.6.5/dist/aws-amplify-auth.min.js"></script>
+    
+    <!-- 設定ファイル -->
+    <script src="js/aws-config.js"></script>
+    <script src="js/auth-manager.js"></script>
+
     <script>
         // AWS環境用のAPI設定
         let API_BASE_URL = 'http://localhost:8081/api'; // デフォルト（ローカル開発用）
@@ -132,9 +144,51 @@
 
         console.log('API Base URL:', API_BASE_URL);
 
+        // 認証チェック
+        async function checkAuthentication() {
+            try {
+                const user = await authManager.getCurrentUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return false;
+                }
+                
+                // ユーザー情報を表示
+                const userInfo = document.getElementById('userInfo');
+                const displayName = authManager.getDisplayName() || 'ユーザー';
+                userInfo.textContent = `こんにちは、${displayName}さん`;
+                
+                return true;
+            } catch (error) {
+                console.error('認証チェックエラー:', error);
+                window.location.href = 'login.html';
+                return false;
+            }
+        }
+
+        // ログアウト処理
+        async function handleLogout() {
+            try {
+                await authManager.signOut();
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('ログアウトエラー:', error);
+                window.location.href = 'login.html';
+            }
+        }
+
         // 初期化
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             console.log('AWS対応ダッシュボード初期化開始');
+            
+            // 認証チェック
+            const isAuthenticated = await checkAuthentication();
+            if (!isAuthenticated) {
+                return;
+            }
+            
+            // ログアウトボタンのイベントリスナー
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
             
             // ボタンイベントリスナー
             document.getElementById('updateWorkloadBtn').addEventListener('click', openWorkloadModal);

@@ -24,6 +24,8 @@ frontend:
     baseDirectory: frontend
     files:
       - 'index.html'
+      - 'login.html'
+      - 'signup.html'
       - 'css/**/*'
       - 'js/**/*'
       - 'package.json'

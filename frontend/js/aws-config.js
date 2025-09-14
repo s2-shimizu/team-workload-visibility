@@ -4,9 +4,9 @@
 const awsConfig = {
     Auth: {
         region: 'ap-northeast-1',
-        userPoolId: 'ap-northeast-1_xxxxxxxxx', // Amplify add authで生成される
-        userPoolWebClientId: 'xxxxxxxxxxxxxxxxxxxxxxxxxx', // Amplify add authで生成される
-        identityPoolId: 'ap-northeast-1:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' // Amplify add authで生成される
+        userPoolId: 'ap-northeast-1_S0zRV4ais',
+        userPoolWebClientId: '7nue9hv9e54sdrcvorl990q1t6',
+        identityPoolId: 'ap-northeast-1:633a8ab9-3889-4894-adef-31671acb45e8'
     },
     API: {
         endpoints: [

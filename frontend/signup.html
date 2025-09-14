@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規登録 - チーム状況ダッシュボード</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .signup-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        .form-group input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .signup-button {
+            background: #28a745;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .signup-button:hover {
+            background: #218838;
+        }
+        .signup-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: #dc3545;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .success-message {
+            color: #28a745;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .confirmation-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h1>新規登録</h1>
+        
+        <!-- 新規登録フォーム -->
+        <form class="signup-form" id="signupForm">
+            <div class="form-group">
+                <label for="name">名前</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">メールアドレス</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="department">部署（任意）</label>
+                <input type="text" id="department" name="department">
+            </div>
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input type="password" id="password" name="password" required minlength="8">
+                <small>8文字以上、大文字・小文字・数字を含む</small>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">パスワード確認</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <button type="submit" class="signup-button" id="signupButton">登録</button>
+            <div id="signupMessage"></div>
+        </form>
+
+        <!-- 確認コード入力フォーム -->
+        <form class="confirmation-form" id="confirmationForm">
+            <h2>メール確認</h2>
+            <p>登録したメールアドレスに確認コードを送信しました。</p>
+            <div class="form-group">
+                <label for="confirmationCode">確認コード</label>
+                <input type="text" id="confirmationCode" name="confirmationCode" required>
+            </div>
+            <button type="submit" class="signup-button" id="confirmButton">確認</button>
+            <div id="confirmMessage"></div>
+        </form>
+
+        <div class="login-link">
+            <a href="login.html">既にアカウントをお持ちの方はこちら</a>
+        </div>
+    </div>
+
+    <!-- AWS Amplify CDN -->
+    <script src="https://unpkg.com/@aws-amplify/core@5.8.5/dist/aws-amplify-core.min.js"></script>
+    <script src="https://unpkg.com/@aws-amplify/auth@5.6.5/dist/aws-amplify-auth.min.js"></script>
+    
+    <!-- 設定ファイル -->
+    <script src="js/aws-config.js"></script>
+    <script src="js/auth-manager.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const signupForm = document.getElementById('signupForm');
+            const confirmationForm = document.getElementById('confirmationForm');
+            const signupButton = document.getElementById('signupButton');
+            const confirmButton = document.getElementById('confirmButton');
+            const signupMessage = document.getElementById('signupMessage');
+            const confirmMessage = document.getElementById('confirmMessage');
+            
+            let currentEmail = '';
+
+            // 新規登録フォーム
+            signupForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const department = document.getElementById('department').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (password !== confirmPassword) {
+                    signupMessage.innerHTML = '<div class="error-message">パスワードが一致しません。</div>';
+                    return;
+                }
+                
+                signupButton.disabled = true;
+                signupButton.textContent = '登録中...';
+                signupMessage.innerHTML = '';
+
+                try {
+                    const Auth = window.aws_amplify_auth ? window.aws_amplify_auth.Auth : window.Auth;
+                    
+                    const result = await Auth.signUp({
+                        username: email,
+                        password: password,
+                        attributes: {
+                            email: email,
+                            name: name,
+                            'custom:department': department || ''
+                        }
+                    });
+                    
+                    currentEmail = email;
+                    signupMessage.innerHTML = '<div class="success-message">登録が完了しました。確認コードを入力してください。</div>';
+                    
+                    // 確認フォームを表示
+                    signupForm.style.display = 'none';
+                    confirmationForm.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('登録エラー:', error);
+                    let errorMessage = '登録に失敗しました。';
+                    
+                    if (error.code === 'UsernameExistsException') {
+                        errorMessage = 'このメールアドレスは既に登録されています。';
+                    } else if (error.code === 'InvalidPasswordException') {
+                        errorMessage = 'パスワードが要件を満たしていません。';
+                    }
+                    
+                    signupMessage.innerHTML = `<div class="error-message">${errorMessage}</div>`;
+                } finally {
+                    signupButton.disabled = false;
+                    signupButton.textContent = '登録';
+                }
+            });
+
+            // 確認コードフォーム
+            confirmationForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const confirmationCode = document.getElementById('confirmationCode').value;
+                
+                confirmButton.disabled = true;
+                confirmButton.textContent = '確認中...';
+                confirmMessage.innerHTML = '';
+
+                try {
+                    const Auth = window.aws_amplify_auth ? window.aws_amplify_auth.Auth : window.Auth;
+                    
+                    await Auth.confirmSignUp(currentEmail, confirmationCode);
+                    
+                    confirmMessage.innerHTML = '<div class="success-message">確認が完了しました。ログインページに移動します...</div>';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.error('確認エラー:', error);
+                    let errorMessage = '確認に失敗しました。';
+                    
+                    if (error.code === 'CodeMismatchException') {
+                        errorMessage = '確認コードが正しくありません。';
+                    } else if (error.code === 'ExpiredCodeException') {
+                        errorMessage = '確認コードの有効期限が切れています。';
+                    }
+                    
+                    confirmMessage.innerHTML = `<div class="error-message">${errorMessage}</div>`;
+                } finally {
+                    confirmButton.disabled = false;
+                    confirmButton.textContent = '確認';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
