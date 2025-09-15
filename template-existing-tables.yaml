@@ -1,0 +1,104 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Team Dashboard Backend - Using existing DynamoDB tables
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1024
+    Runtime: java17
+    Environment:
+      Variables:
+        SPRING_PROFILES_ACTIVE: lambda,dynamodb
+        JAVA_TOOL_OPTIONS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.awt.headless=true"
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment (dev/staging/prod)
+
+Resources:
+  TeamDashboardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'team-dashboard-${Environment}'
+      CodeUri: backend/
+      Handler: com.teamdashboard.SimpleLambdaHandler::handleRequest
+      Description: Team Dashboard API Lambda function
+      Environment:
+        Variables:
+          WORKLOAD_STATUS_TABLE: !Sub 'WorkloadStatus-${Environment}'
+          TEAM_ISSUE_TABLE: !Sub 'TeamIssue-${Environment}'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref TeamDashboardApi
+        RootApiEvent:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+            RestApiId: !Ref TeamDashboardApi
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:DeleteItem
+                - dynamodb:Query
+                - dynamodb:Scan
+              Resource:
+                - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/WorkloadStatus-${Environment}'
+                - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TeamIssue-${Environment}'
+                - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TeamIssue-${Environment}/index/*'
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+
+  TeamDashboardApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub 'team-dashboard-${Environment}'
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+
+Outputs:
+  ApiGatewayEndpoint:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${TeamDashboardApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/"
+    Export:
+      Name: !Sub "${AWS::StackName}-ApiEndpoint"
+  
+  FunctionName:
+    Description: "Lambda Function Name"
+    Value: !Ref TeamDashboardFunction
+    Export:
+      Name: !Sub "${AWS::StackName}-FunctionName"
+  
+  WorkloadStatusTableName:
+    Description: "WorkloadStatus DynamoDB Table Name (existing)"
+    Value: !Sub 'WorkloadStatus-${Environment}'
+    Export:
+      Name: !Sub "${AWS::StackName}-WorkloadStatusTable"
+  
+  TeamIssueTableName:
+    Description: "TeamIssue DynamoDB Table Name (existing)"
+    Value: !Sub 'TeamIssue-${Environment}'
+    Export:
+      Name: !Sub "${AWS::StackName}-TeamIssueTable"

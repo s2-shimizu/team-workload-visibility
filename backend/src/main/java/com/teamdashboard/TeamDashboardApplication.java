@@ -1,13 +1,16 @@
 package com.teamdashboard;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * ローカル開発用のSpring Bootアプリケーション
+ * Lambda環境との競合を避けるため@SpringBootApplicationではなく@Configurationを使用
  */
-@SpringBootApplication(exclude = {
+@Configuration
+@EnableAutoConfiguration(exclude = {
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
     org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
 })

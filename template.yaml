@@ -23,13 +23,14 @@ Resources:
   TeamDashboardFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub 'team-dashboard-api-${Environment}'
+      FunctionName: !Sub 'team-dashboard-v2-${Environment}'
       CodeUri: backend/
-      Handler: com.teamdashboard.LambdaHandler::handleRequest
+      Handler: com.teamdashboard.SimpleLambdaHandler::handleRequest
       Description: Team Dashboard API Lambda function
       Environment:
         Variables:
-          DYNAMODB_TABLE_NAME: !Ref TeamDashboardTable
+          WORKLOAD_STATUS_TABLE: !Ref WorkloadStatusTable
+          TEAM_ISSUE_TABLE: !Ref TeamIssueTable
       Events:
         ApiEvent:
           Type: Api
@@ -45,7 +46,9 @@ Resources:
             RestApiId: !Ref TeamDashboardApi
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref TeamDashboardTable
+            TableName: !Ref WorkloadStatusTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TeamIssueTable
         - Version: "2012-10-17"
           Statement:
             - Effect: Allow
@@ -58,41 +61,81 @@ Resources:
   TeamDashboardApi:
     Type: AWS::Serverless::Api
     Properties:
-      Name: !Sub 'team-dashboard-api-${Environment}'
+      Name: !Sub 'team-dashboard-v2-${Environment}'
       StageName: !Ref Environment
       Cors:
         AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
         AllowOrigin: "'*'"
 
-  TeamDashboardTable:
+  WorkloadStatusTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub 'TeamDashboard-${Environment}'
+      TableName: !Sub 'WorkloadStatus-${Environment}'
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
-        - AttributeName: PK
-          AttributeType: S
-        - AttributeName: SK
-          AttributeType: S
-        - AttributeName: GSI1PK
-          AttributeType: S
-        - AttributeName: GSI1SK
+        - AttributeName: userId
           AttributeType: S
       KeySchema:
-        - AttributeName: PK
+        - AttributeName: userId
           KeyType: HASH
-        - AttributeName: SK
-          KeyType: RANGE
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: TeamDashboard
+        - Key: Component
+          Value: WorkloadStatus
+
+  TeamIssueTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'TeamIssue-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: issueId
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: status
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: issueId
+          KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: GSI1
+        - IndexName: UserIndex
           KeySchema:
-            - AttributeName: GSI1PK
+            - AttributeName: userId
               KeyType: HASH
-            - AttributeName: GSI1SK
+            - AttributeName: createdAt
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+        - IndexName: StatusIndex
+          KeySchema:
+            - AttributeName: status
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: TeamDashboard
+        - Key: Component
+          Value: TeamIssue
 
 Outputs:
   ApiGatewayEndpoint:
@@ -106,3 +149,15 @@ Outputs:
     Value: !Ref TeamDashboardFunction
     Export:
       Name: !Sub "${AWS::StackName}-FunctionName"
+  
+  WorkloadStatusTableName:
+    Description: "WorkloadStatus DynamoDB Table Name"
+    Value: !Ref WorkloadStatusTable
+    Export:
+      Name: !Sub "${AWS::StackName}-WorkloadStatusTable"
+  
+  TeamIssueTableName:
+    Description: "TeamIssue DynamoDB Table Name"
+    Value: !Ref TeamIssueTable
+    Export:
+      Name: !Sub "${AWS::StackName}-TeamIssueTable"

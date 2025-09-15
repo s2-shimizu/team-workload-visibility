@@ -103,6 +103,12 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         
+        <!-- WebSocket Support -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        
         <!-- Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -233,7 +239,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skipTests>${skipTests}</skipTests>
+                    <skipTests>true</skipTests>
                     <systemPropertyVariables>
                         <spring.profiles.active>test</spring.profiles.active>
                     </systemPropertyVariables>

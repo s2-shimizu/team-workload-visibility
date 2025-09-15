@@ -11,9 +11,9 @@
 class APIClient {
     constructor() {
         this.apiName = 'teamDashboardApi';
-        this.baseURL = window.location.hostname === 'localhost' 
+        this.baseURL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
             ? 'http://localhost:8081/api' 
-            : null; // Amplifyの場合はnull
+            : 'https://bn6xwu62qd.execute-api.ap-northeast-1.amazonaws.com/dev'; // 直接API Gateway URL
         this.loadingStates = new Map();
         this.errorHandlers = new Map();
     }
@@ -308,6 +308,7 @@ class APIClient {
             return result || [];
         } catch (error) {
             console.warn('API呼び出しに失敗しました。モックデータを使用します:', error.message);
+            this.handleError(key, error);
             // フォールバック: モックデータを返す
             return this.getMockWorkloadStatuses();
         } finally {

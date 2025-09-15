@@ -118,18 +118,24 @@
                 messageDiv.innerHTML = '';
 
                 try {
-                    const user = await authManager.signIn(email, password);
-                    messageDiv.innerHTML = '<div class="success-message">ログインに成功しました。リダイレクトしています...</div>';
+                    const result = await authManager.signIn(email, password);
                     
-                    // メインページにリダイレクト
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1000);
+                    if (result.success) {
+                        messageDiv.innerHTML = '<div class="success-message">ログインに成功しました。リダイレクトしています...</div>';
+                        
+                        // メインページにリダイレクト
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1000);
+                    } else {
+                        throw new Error(result.error);
+                    }
                     
                 } catch (error) {
                     console.error('ログインエラー:', error);
-                    let errorMessage = 'ログインに失敗しました。';
+                    let errorMessage = error.message || 'ログインに失敗しました。';
                     
+                    // Cognitoエラーコードに基づくメッセージ
                     if (error.code === 'UserNotConfirmedException') {
                         errorMessage = 'メールアドレスの確認が必要です。確認メールをご確認ください。';
                     } else if (error.code === 'NotAuthorizedException') {

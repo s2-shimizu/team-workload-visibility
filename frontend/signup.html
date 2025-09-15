@@ -163,28 +163,29 @@
                 signupMessage.innerHTML = '';
 
                 try {
-                    const Auth = window.aws_amplify_auth ? window.aws_amplify_auth.Auth : window.Auth;
+                    const result = await authManager.signUp(email, password, email, name);
                     
-                    const result = await Auth.signUp({
-                        username: email,
-                        password: password,
-                        attributes: {
-                            email: email,
-                            name: name,
-                            'custom:department': department || ''
+                    if (result.success) {
+                        currentEmail = email;
+                        
+                        if (result.needsConfirmation) {
+                            signupMessage.innerHTML = '<div class="success-message">登録が完了しました。確認コードを入力してください。</div>';
+                            // 確認フォームを表示
+                            signupForm.style.display = 'none';
+                            confirmationForm.style.display = 'block';
+                        } else {
+                            signupMessage.innerHTML = '<div class="success-message">登録が完了しました。ログインページに移動します...</div>';
+                            setTimeout(() => {
+                                window.location.href = 'login.html';
+                            }, 2000);
                         }
-                    });
-                    
-                    currentEmail = email;
-                    signupMessage.innerHTML = '<div class="success-message">登録が完了しました。確認コードを入力してください。</div>';
-                    
-                    // 確認フォームを表示
-                    signupForm.style.display = 'none';
-                    confirmationForm.style.display = 'block';
+                    } else {
+                        throw new Error(result.error);
+                    }
                     
                 } catch (error) {
                     console.error('登録エラー:', error);
-                    let errorMessage = '登録に失敗しました。';
+                    let errorMessage = error.message || '登録に失敗しました。';
                     
                     if (error.code === 'UsernameExistsException') {
                         errorMessage = 'このメールアドレスは既に登録されています。';
@@ -210,19 +211,21 @@
                 confirmMessage.innerHTML = '';
 
                 try {
-                    const Auth = window.aws_amplify_auth ? window.aws_amplify_auth.Auth : window.Auth;
+                    const result = await authManager.confirmSignUp(currentEmail, confirmationCode);
                     
-                    await Auth.confirmSignUp(currentEmail, confirmationCode);
-                    
-                    confirmMessage.innerHTML = '<div class="success-message">確認が完了しました。ログインページに移動します...</div>';
-                    
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
+                    if (result.success) {
+                        confirmMessage.innerHTML = '<div class="success-message">確認が完了しました。ログインページに移動します...</div>';
+                        
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 2000);
+                    } else {
+                        throw new Error(result.error);
+                    }
                     
                 } catch (error) {
                     console.error('確認エラー:', error);
-                    let errorMessage = '確認に失敗しました。';
+                    let errorMessage = error.message || '確認に失敗しました。';
                     
                     if (error.code === 'CodeMismatchException') {
                         errorMessage = '確認コードが正しくありません。';

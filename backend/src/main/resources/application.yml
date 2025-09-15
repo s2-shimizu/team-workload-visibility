@@ -1,42 +1,185 @@
+# Team Dashboard Application Configuration
 spring:
   application:
-    name: team-dashboard
+    name: team-dashboard-backend
   
+  profiles:
+    active: local
+    
+  # Jackson設定
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+# AWS設定
+aws:
+  region: ap-northeast-1
+  dynamodb:
+    endpoint: # ローカル開発時のみ設定
+    tables:
+      workload-status: ${WORKLOAD_STATUS_TABLE:WorkloadStatus}
+      team-issue: ${TEAM_ISSUE_TABLE:TeamIssue}
+
+# ログ設定
+logging:
+  level:
+    com.teamdashboard: INFO
+    software.amazon.awssdk: WARN
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# サーバー設定
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+---
+# ローカル開発環境
+spring:
+  config:
+    activate:
+      on-profile: local
+  
+  # H2データベース（フォールバック用）
   datasource:
-    url: jdbc:h2:mem:team_dashboard
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
     username: sa
     password: 
-    driver-class-name: org.h2.Driver
-  
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true
-    defer-datasource-initialization: true
-  
-  sql:
-    init:
-      mode: always
-      data-locations: classpath:data.sql
   
   h2:
     console:
       enabled: true
       path: /h2-console
   
-  security:
-    user:
-      name: admin
-      password: admin123
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
 
-server:
-  port: 8081
-  address: 0.0.0.0  # 全てのネットワークインターフェースでリッスン
+# DynamoDB Local設定（オプション）
+aws:
+  dynamodb:
+    endpoint: http://localhost:8000  # DynamoDB Localを使用する場合
 
 logging:
   level:
     com.teamdashboard: DEBUG
+    software.amazon.awssdk: INFO
+
+---
+# Lambda/AWS環境
+spring:
+  config:
+    activate:
+      on-profile: lambda
+  
+  # データベース設定を無効化
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+# DynamoDB設定
+aws:
+  dynamodb:
+    # 本番環境ではendpointを設定しない（デフォルトのAWSエンドポイントを使用）
+    tables:
+      workload-status: ${WORKLOAD_STATUS_TABLE:WorkloadStatus}
+      team-issue: ${TEAM_ISSUE_TABLE:TeamIssue}
+
+logging:
+  level:
+    com.teamdashboard: INFO
+    software.amazon.awssdk: WARN
+
+---
+# 開発環境（DynamoDB使用）
+spring:
+  config:
+    activate:
+      on-profile: dev
+  
+  # データベース設定を無効化
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+# DynamoDB設定
+aws:
+  dynamodb:
+    # 開発環境のDynamoDBエンドポイント（必要に応じて設定）
+    tables:
+      workload-status: ${WORKLOAD_STATUS_TABLE:WorkloadStatus}
+      team-issue: ${TEAM_ISSUE_TABLE:TeamIssue}
+
+logging:
+  level:
+    com.teamdashboard: DEBUG
+    software.amazon.awssdk: INFO
+
+---
+# 本番環境
+spring:
+  config:
+    activate:
+      on-profile: prod
+  
+  # データベース設定を無効化
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+# DynamoDB設定
+aws:
+  dynamodb:
+    # 本番環境ではendpointを設定しない
+    tables:
+      workload-status: ${WORKLOAD_STATUS_TABLE:WorkloadStatus}
+      team-issue: ${TEAM_ISSUE_TABLE:TeamIssue}
+
+logging:
+  level:
+    com.teamdashboard: INFO
+    software.amazon.awssdk: WARN
+    org.springframework.security: WARN
+
+---
+# テスト環境
+spring:
+  config:
+    activate:
+      on-profile: test
+  
+  # テスト用H2データベース
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+
+# DynamoDB Local設定
+aws:
+  dynamodb:
+    endpoint: http://localhost:8000
+    tables:
+      workload-status: ${WORKLOAD_STATUS_TABLE:WorkloadStatus}
+      team-issue: ${TEAM_ISSUE_TABLE:TeamIssue}
+
+logging:
+  level:
+    com.teamdashboard: DEBUG
+    software.amazon.awssdk: DEBUG

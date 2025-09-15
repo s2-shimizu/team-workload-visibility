@@ -1,219 +1,135 @@
 package com.teamdashboard.service;
 
-import com.teamdashboard.entity.IssueComment;
-import com.teamdashboard.entity.IssueStatus;
-import com.teamdashboard.entity.TeamIssue;
-import com.teamdashboard.entity.User;
-import com.teamdashboard.repository.IssueCommentRepository;
+import com.teamdashboard.model.TeamIssue;
 import com.teamdashboard.repository.TeamIssueRepository;
-import com.teamdashboard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.context.annotation.Profile;
 
 import java.util.List;
 import java.util.Optional;
 
-/**
- * TeamIssue（困りごと）に関するビジネスロジックを提供するサービスクラス
- */
 @Service
-@Transactional
-@Profile("!dynamodb")
 public class TeamIssueService {
 
     private final TeamIssueRepository teamIssueRepository;
-    private final IssueCommentRepository issueCommentRepository;
-    private final UserRepository userRepository;
 
     @Autowired
-    public TeamIssueService(TeamIssueRepository teamIssueRepository,
-                           IssueCommentRepository issueCommentRepository,
-                           UserRepository userRepository) {
+    public TeamIssueService(TeamIssueRepository teamIssueRepository) {
         this.teamIssueRepository = teamIssueRepository;
-        this.issueCommentRepository = issueCommentRepository;
-        this.userRepository = userRepository;
     }
 
-    /**
-     * 全ての困りごとを取得（作成日時の降順）
-     * @return 困りごとのリスト
-     */
-    @Transactional(readOnly = true)
-    public List<TeamIssue> getAllIssues() {
-        return teamIssueRepository.findAllWithUserOrderByCreatedAtDesc();
+    public List<TeamIssue> getAllTeamIssues() {
+        return teamIssueRepository.findAll();
     }
 
-    /**
-     * 指定されたステータスの困りごとを取得
-     * @param status 困りごとのステータス
-     * @return 困りごとのリスト
-     */
-    @Transactional(readOnly = true)
-    public List<TeamIssue> getIssuesByStatus(IssueStatus status) {
-        return teamIssueRepository.findByStatusWithUserOrderByCreatedAtDesc(status);
+    public List<TeamIssue> getOpenTeamIssues() {
+        return teamIssueRepository.findByStatus("OPEN");
     }
 
-    /**
-     * 未解決の困りごとを取得
-     * @return 未解決の困りごとのリスト
-     */
-    @Transactional(readOnly = true)
-    public List<TeamIssue> getOpenIssues() {
-        return getIssuesByStatus(IssueStatus.OPEN);
+    public List<TeamIssue> getTeamIssuesByUserId(String userId) {
+        return teamIssueRepository.findByUserId(userId);
     }
 
-    /**
-     * 解決済みの困りごとを取得
-     * @return 解決済みの困りごとのリスト
-     */
-    @Transactional(readOnly = true)
-    public List<TeamIssue> getResolvedIssues() {
-        return getIssuesByStatus(IssueStatus.RESOLVED);
+    public List<TeamIssue> getTeamIssuesByPriority(String priority) {
+        return teamIssueRepository.findByPriority(priority);
     }
 
-    /**
-     * 指定されたIDの困りごとを取得
-     * @param id 困りごとID
-     * @return 困りごと（存在しない場合はOptional.empty()）
-     */
-    @Transactional(readOnly = true)
-    public Optional<TeamIssue> getIssueById(Long id) {
-        return teamIssueRepository.findById(id);
+    public Optional<TeamIssue> getTeamIssueById(String issueId) {
+        return teamIssueRepository.findByIssueId(issueId);
     }
 
-    /**
-     * 指定されたユーザーの困りごとを取得
-     * @param userId ユーザーID
-     * @return 困りごとのリスト
-     */
-    @Transactional(readOnly = true)
-    public List<TeamIssue> getIssuesByUserId(Long userId) {
-        return teamIssueRepository.findByUserIdWithUserOrderByCreatedAtDesc(userId);
+    public TeamIssue createTeamIssue(String userId, String displayName, String content, String priority) {
+        TeamIssue teamIssue = new TeamIssue();
+        teamIssue.setUserId(userId);
+        teamIssue.setDisplayName(displayName);
+        teamIssue.setContent(content);
+        teamIssue.setPriority(priority != null ? priority : "MEDIUM");
+        teamIssue.setStatus("OPEN");
+        
+        return teamIssueRepository.save(teamIssue);
     }
 
-    /**
-     * 新しい困りごとを投稿
-     * @param userId 投稿者のユーザーID
-     * @param content 困りごとの内容
-     * @return 作成された困りごと
-     * @throws IllegalArgumentException ユーザーが存在しない場合
-     */
-    public TeamIssue createIssue(Long userId, String content) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("ユーザーが見つかりません: " + userId));
+    public TeamIssue updateTeamIssue(TeamIssue teamIssue) {
+        return teamIssueRepository.save(teamIssue);
+    }
 
-        if (content == null || content.trim().isEmpty()) {
-            throw new IllegalArgumentException("困りごとの内容は必須です");
+    public Optional<TeamIssue> resolveTeamIssue(String issueId) {
+        Optional<TeamIssue> optionalIssue = teamIssueRepository.findByIssueId(issueId);
+        if (optionalIssue.isPresent()) {
+            TeamIssue issue = optionalIssue.get();
+            issue.setStatus("RESOLVED");
+            return Optional.of(teamIssueRepository.save(issue));
+        }
+        return Optional.empty();
+    }
+
+    public Optional<TeamIssue> reopenTeamIssue(String issueId) {
+        Optional<TeamIssue> optionalIssue = teamIssueRepository.findByIssueId(issueId);
+        if (optionalIssue.isPresent()) {
+            TeamIssue issue = optionalIssue.get();
+            issue.setStatus("OPEN");
+            issue.setResolvedAt(null);
+            return Optional.of(teamIssueRepository.save(issue));
+        }
+        return Optional.empty();
+    }
+
+    public void deleteTeamIssue(String issueId) {
+        teamIssueRepository.deleteByIssueId(issueId);
+    }
+
+    public boolean existsByIssueId(String issueId) {
+        return teamIssueRepository.existsByIssueId(issueId);
+    }
+
+    public long getTotalCount() {
+        return teamIssueRepository.count();
+    }
+
+    // 統計情報の取得
+    public IssueStatistics getIssueStatistics() {
+        long totalCount = teamIssueRepository.count();
+        long openCount = teamIssueRepository.countByStatus("OPEN");
+        long resolvedCount = teamIssueRepository.countByStatus("RESOLVED");
+        long highPriorityCount = teamIssueRepository.countByPriority("HIGH");
+        long mediumPriorityCount = teamIssueRepository.countByPriority("MEDIUM");
+        long lowPriorityCount = teamIssueRepository.countByPriority("LOW");
+        
+        return new IssueStatistics(
+                totalCount,
+                openCount,
+                resolvedCount,
+                highPriorityCount,
+                mediumPriorityCount,
+                lowPriorityCount
+        );
+    }
+
+    // 統計情報を格納するための内部クラス
+    public static class IssueStatistics {
+        private final long total;
+        private final long open;
+        private final long resolved;
+        private final long highPriority;
+        private final long mediumPriority;
+        private final long lowPriority;
+
+        public IssueStatistics(long total, long open, long resolved, 
+                             long highPriority, long mediumPriority, long lowPriority) {
+            this.total = total;
+            this.open = open;
+            this.resolved = resolved;
+            this.highPriority = highPriority;
+            this.mediumPriority = mediumPriority;
+            this.lowPriority = lowPriority;
         }
 
-        if (content.length() > 1000) {
-            throw new IllegalArgumentException("困りごとの内容は1000文字以内で入力してください");
-        }
-
-        TeamIssue issue = new TeamIssue(user, content.trim());
-        return teamIssueRepository.save(issue);
-    }
-
-    /**
-     * 困りごとを解決済みにマーク
-     * @param issueId 困りごとID
-     * @return 更新された困りごと
-     * @throws IllegalArgumentException 困りごとが存在しない場合
-     */
-    public TeamIssue resolveIssue(Long issueId) {
-        TeamIssue issue = teamIssueRepository.findById(issueId)
-                .orElseThrow(() -> new IllegalArgumentException("困りごとが見つかりません: " + issueId));
-
-        if (issue.isResolved()) {
-            throw new IllegalStateException("この困りごとは既に解決済みです");
-        }
-
-        issue.resolve();
-        return teamIssueRepository.save(issue);
-    }
-
-    /**
-     * 困りごとを未解決に戻す
-     * @param issueId 困りごとID
-     * @return 更新された困りごと
-     * @throws IllegalArgumentException 困りごとが存在しない場合
-     */
-    public TeamIssue reopenIssue(Long issueId) {
-        TeamIssue issue = teamIssueRepository.findById(issueId)
-                .orElseThrow(() -> new IllegalArgumentException("困りごとが見つかりません: " + issueId));
-
-        if (!issue.isResolved()) {
-            throw new IllegalStateException("この困りごとは既に未解決状態です");
-        }
-
-        issue.reopen();
-        return teamIssueRepository.save(issue);
-    }
-
-    /**
-     * 指定された困りごとのコメントを取得
-     * @param issueId 困りごとID
-     * @return コメントのリスト（作成日時の昇順）
-     */
-    @Transactional(readOnly = true)
-    public List<IssueComment> getCommentsByIssueId(Long issueId) {
-        return issueCommentRepository.findByIssueIdWithUserOrderByCreatedAtAsc(issueId);
-    }
-
-    /**
-     * 困りごとにコメントを投稿
-     * @param issueId 困りごとID
-     * @param userId コメント投稿者のユーザーID
-     * @param content コメント内容
-     * @return 作成されたコメント
-     * @throws IllegalArgumentException 困りごとまたはユーザーが存在しない場合
-     */
-    public IssueComment addComment(Long issueId, Long userId, String content) {
-        TeamIssue issue = teamIssueRepository.findById(issueId)
-                .orElseThrow(() -> new IllegalArgumentException("困りごとが見つかりません: " + issueId));
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("ユーザーが見つかりません: " + userId));
-
-        if (content == null || content.trim().isEmpty()) {
-            throw new IllegalArgumentException("コメント内容は必須です");
-        }
-
-        if (content.length() > 500) {
-            throw new IllegalArgumentException("コメントは500文字以内で入力してください");
-        }
-
-        IssueComment comment = new IssueComment(issue, user, content.trim());
-        return issueCommentRepository.save(comment);
-    }
-
-    /**
-     * 未解決の困りごとの件数を取得
-     * @return 未解決の困りごとの件数
-     */
-    @Transactional(readOnly = true)
-    public long getOpenIssueCount() {
-        return teamIssueRepository.countByStatus(IssueStatus.OPEN);
-    }
-
-    /**
-     * 解決済みの困りごとの件数を取得
-     * @return 解決済みの困りごとの件数
-     */
-    @Transactional(readOnly = true)
-    public long getResolvedIssueCount() {
-        return teamIssueRepository.countByStatus(IssueStatus.RESOLVED);
-    }
-
-    /**
-     * 指定された困りごとのコメント数を取得
-     * @param issueId 困りごとID
-     * @return コメント数
-     */
-    @Transactional(readOnly = true)
-    public long getCommentCount(Long issueId) {
-        return issueCommentRepository.countByIssueId(issueId);
+        // Getters
+        public long getTotal() { return total; }
+        public long getOpen() { return open; }
+        public long getResolved() { return resolved; }
+        public long getHighPriority() { return highPriority; }
+        public long getMediumPriority() { return mediumPriority; }
+        public long getLowPriority() { return lowPriority; }
     }
 }

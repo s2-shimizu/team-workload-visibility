@@ -12,11 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication(exclude = {
     HttpEncodingAutoConfiguration.class,
-    MultipartAutoConfiguration.class,
-    HibernateJpaAutoConfiguration.class,
-    DataSourceAutoConfiguration.class,
-    DataSourceTransactionManagerAutoConfiguration.class,
-    SecurityAutoConfiguration.class
+    MultipartAutoConfiguration.class
 })
 @ComponentScan(basePackages = {
     "com.teamdashboard.controller",
